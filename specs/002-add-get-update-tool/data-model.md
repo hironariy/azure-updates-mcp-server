@@ -16,8 +16,7 @@ The complete Azure update entity with all fields.
 **Fields**:
 - `id`: string - Unique identifier (UUID format)
 - `title`: string - Update title
-- `description`: string - Full HTML description
-- `descriptionMarkdown`: string | undefined - Markdown version of description
+- `description`: string - Full description in Markdown format
 - `status`: string | null - Update status (e.g., "Active", "Retired")
 - `locale`: string | null - Locale (e.g., "en-US")
 - `created`: string - ISO 8601 timestamp
@@ -39,7 +38,7 @@ Lightweight version of Azure update for search results, excluding large descript
 
 **Type Definition**:
 ```typescript
-export type AzureUpdateSummary = Omit<AzureUpdate, 'description' | 'descriptionMarkdown'>;
+export type AzureUpdateSummary = Omit<AzureUpdate, 'description'>;
 ```
 
 **Fields** (inherited from AzureUpdate, minus descriptions):
@@ -79,12 +78,11 @@ Availability information for an update.
 
 ```
 AzureUpdate (Full entity)
-    ├─ Contains: description (HTML)
-    ├─ Contains: descriptionMarkdown
+    ├─ Contains: description (Markdown)
     └─ Includes: all AzureUpdateSummary fields
 
 AzureUpdateSummary (Subset of AzureUpdate)
-    ├─ Omits: description, descriptionMarkdown
+    ├─ Omits: description
     ├─ Adds: relevanceScore (search context only)
     └─ Includes: id, title, status, locale, created, modified, tags, productCategories, products, availabilities
 
@@ -120,8 +118,7 @@ AzureUpdateAvailability (Nested)
 
 ### AzureUpdate
 - Inherits all AzureUpdateSummary validations
-- `description`: Required, non-empty string (HTML)
-- `descriptionMarkdown`: Optional (may be undefined if conversion failed)
+- `description`: Required, non-empty string (Markdown)
 
 ## Size Estimates
 
@@ -135,9 +132,8 @@ AzureUpdateAvailability (Nested)
 
 ### AzureUpdate (average)
 - Summary fields: ~600 bytes
-- Description (HTML): ~2000-5000 bytes
 - Description (Markdown): ~1500-4000 bytes
-- **Total**: ~4000-10000 bytes per result
+- **Total**: ~2000-5000 bytes per result
 
 **Savings**: Search results are **80-90% smaller** without descriptions.
 

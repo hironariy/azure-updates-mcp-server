@@ -48,7 +48,7 @@ An AI assistant wants to search for updates without consuming a large amount of 
 
 - **FR-001**: System MUST provide a new tool `get_azure_update`.
 - **FR-002**: `get_azure_update` MUST accept a single required argument `id` (string).
-- **FR-003**: `get_azure_update` MUST return the full update object, including `description` (HTML) and `descriptionMarkdown`.
+- **FR-003**: `get_azure_update` MUST return the full update object, including `description` in Markdown format.
 - **FR-004**: System MUST modify `search_azure_updates` to remove the `id` parameter from its input schema.
 - **FR-005**: `search_azure_updates` MUST NOT return the full `description` or `descriptionMarkdown` fields in the results list.
 - **FR-006**: `search_azure_updates` MUST NOT return any description summary or snippet. It MUST return only title and metadata to maximize token savings.

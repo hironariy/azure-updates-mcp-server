@@ -100,8 +100,7 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 {
   "id": "AZ-abc123...",
   "title": "Retirement: Azure Virtual Machines Basic tier",
-  "description": "<p>The Basic tier for Azure Virtual Machines will be retired on March 31, 2026...</p>",
-  "descriptionMarkdown": "The Basic tier for Azure Virtual Machines will be retired on March 31, 2026...",
+  "description": "The Basic tier for Azure Virtual Machines will be retired on March 31, 2026...",
   "status": "Active",
   "tags": ["Retirements"],
   "productCategories": ["Compute"],
@@ -120,7 +119,7 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 }
 ```
 
-**Key Feature**: Includes full `description` (HTML) and `descriptionMarkdown` fields.
+**Key Feature**: Includes full `description` in Markdown format.
 
 ---
 
@@ -242,7 +241,7 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 ## Performance Notes
 
 - **Search**: ~20-50ms average query time, ~500-700 bytes per result
-- **Get**: ~10-20ms average query time, ~4-10KB per result
+- **Get**: ~10-20ms average query time, ~2-5KB per result
 - **Token Savings**: Search results are **80-90% smaller** than previous version
 - **Recommended Pattern**: Search broad, retrieve narrow (only fetch details for updates the user cares about)
 

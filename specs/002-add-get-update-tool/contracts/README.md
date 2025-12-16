@@ -9,15 +9,15 @@ Tool contract for the new `get_azure_update` tool. Retrieves full update details
 
 **Key Features**:
 - Single required parameter: `id`
-- Returns complete `AzureUpdate` object with full description
-- ~4-10KB average response size
+- Returns complete `AzureUpdate` object with full Markdown description
+- ~2-5KB average response size
 
 ### search-azure-updates.json
 Updated tool contract for the modified `search_azure_updates` tool. Searches and filters updates, returning lightweight results.
 
 **Key Changes from Original**:
 - **Removed**: `id` parameter (use `get_azure_update` instead)
-- **Removed**: `description` and `descriptionMarkdown` from output schema
+- **Removed**: `description` from output schema
 - **Added**: Note about using `get_azure_update` for full details
 - ~500-700 bytes average per result (80%+ reduction)
 

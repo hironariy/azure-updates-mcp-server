@@ -60,7 +60,7 @@ This document captures research findings for implementing a two-tool pattern in 
 **Decision**: 
 ```typescript
 // In src/models/azure-update.ts
-export type AzureUpdateSummary = Omit<AzureUpdate, 'description' | 'descriptionMarkdown'>;
+export type AzureUpdateSummary = Omit<AzureUpdate, 'description'>;
 ```
 
 **Alternatives Considered**:

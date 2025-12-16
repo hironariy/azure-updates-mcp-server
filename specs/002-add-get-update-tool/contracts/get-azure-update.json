@@ -26,11 +26,7 @@
             },
             "description": {
                 "type": "string",
-                "description": "Full HTML description of the update"
-            },
-            "descriptionMarkdown": {
-                "type": "string",
-                "description": "Markdown version of the description (may be undefined if conversion failed)"
+                "description": "Full description of the update in Markdown format"
             },
             "status": {
                 "type": "string",
@@ -122,8 +118,7 @@
             "output": {
                 "id": "AZ-123e4567-e89b-12d3-a456-426614174000",
                 "title": "Retirement: Azure Virtual Machines Basic tier",
-                "description": "<p>The Basic tier for Azure Virtual Machines will be retired on March 31, 2026. Customers should migrate to Standard tier before this date.</p>",
-                "descriptionMarkdown": "The Basic tier for Azure Virtual Machines will be retired on March 31, 2026. Customers should migrate to Standard tier before this date.",
+                "description": "The Basic tier for Azure Virtual Machines will be retired on March 31, 2026. Customers should migrate to Standard tier before this date.",
                 "status": "Active",
                 "locale": "en-US",
                 "created": "2025-01-15T10:00:00.000Z",
