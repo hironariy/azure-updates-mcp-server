@@ -14,6 +14,7 @@ import {
 import type Database from 'better-sqlite3';
 
 import * as logger from './utils/logger.js';
+import { handleSearchAzureUpdates } from './tools/search-azure-updates.tool.js';
 
 /**
  * MCP Server configuration
@@ -57,7 +58,7 @@ export function createMCPServer(config: ServerConfig): Server {
 /**
  * Register tool handlers
  */
-function registerToolHandlers(server: Server, _db: Database.Database): void {
+function registerToolHandlers(server: Server, db: Database.Database): void {
     // List available tools
     server.setRequestHandler(ListToolsRequestSchema, () => {
         logger.debug('ListTools request received');
@@ -140,23 +141,14 @@ function registerToolHandlers(server: Server, _db: Database.Database): void {
         };
     });
 
-    // Call tool handler (actual implementation will be in tools/ directory)
+    // Call tool handler
     server.setRequestHandler(CallToolRequestSchema, (request) => {
         logger.info('CallTool request received', {
             tool: request.params.name,
         });
 
         if (request.params.name === 'search_azure_updates') {
-            // Tool implementation will be imported from tools/search-azure-updates.tool.ts
-            // For now, return a placeholder
-            return {
-                content: [
-                    {
-                        type: 'text',
-                        text: 'Tool implementation pending - will be completed in Phase 3 (User Story 1)',
-                    },
-                ],
-            };
+            return handleSearchAzureUpdates(db, request.params.arguments);
         }
 
         throw new Error(`Unknown tool: ${request.params.name}`);

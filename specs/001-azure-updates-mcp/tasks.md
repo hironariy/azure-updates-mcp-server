@@ -63,16 +63,16 @@
 
 ### Implementation for User Story 1 ✅
 
-- [ ] T021 [P] [US1] Implement HTML-to-Markdown converter service in src/services/html-converter.service.ts with Turndown library and custom rules for data URLs
-- [ ] T022 [P] [US1] Implement FTS5 query builder for keyword search in src/services/search.service.ts
-- [ ] T023 [US1] Implement search method with BM25 relevance ranking in src/services/search.service.ts (depends on T022)
-- [ ] T024 [US1] Add filter application for tags in src/services/search.service.ts using EXISTS subqueries
-- [ ] T025 [US1] Add filter application for product categories in src/services/search.service.ts
-- [ ] T026 [US1] Add filter application for products in src/services/search.service.ts
-- [ ] T027 [US1] Implement search_azure_updates MCP tool handler in src/tools/search-azure-updates.tool.ts with query parameter support
-- [ ] T028 [US1] Add input validation and error handling with descriptive error messages in src/tools/search-azure-updates.tool.ts
-- [ ] T029 [US1] Register search_azure_updates tool with MCP SDK in src/server.ts
-- [ ] T030 [US1] Add structured logging for all search operations in src/tools/search-azure-updates.tool.ts
+- [X] T021 [P] [US1] Implement HTML-to-Markdown converter service in src/services/html-converter.service.ts with Turndown library and custom rules for data URLs
+- [X] T022 [P] [US1] Implement FTS5 query builder for keyword search in src/services/search.service.ts
+- [X] T023 [US1] Implement search method with BM25 relevance ranking in src/services/search.service.ts (depends on T022)
+- [X] T024 [US1] Add filter application for tags in src/services/search.service.ts using EXISTS subqueries
+- [X] T025 [US1] Add filter application for product categories in src/services/search.service.ts
+- [X] T026 [US1] Add filter application for products in src/services/search.service.ts
+- [X] T027 [US1] Implement search_azure_updates MCP tool handler in src/tools/search-azure-updates.tool.ts with query parameter support
+- [X] T028 [US1] Add input validation and error handling with descriptive error messages in src/tools/search-azure-updates.tool.ts
+- [X] T029 [US1] Register search_azure_updates tool with MCP SDK in src/server.ts
+- [X] T030 [US1] Add structured logging for all search operations in src/tools/search-azure-updates.tool.ts
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - natural language keyword search with basic filters works
 
