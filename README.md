@@ -10,11 +10,11 @@ An MCP (Model Context Protocol) server that provides AI assistants with seamless
 
 ## Features
 
-🔍 **Better Keyword Matching** - Full-text search (FTS5) across titles and descriptions with BM25 relevance ranking, offering improved query search than the original API.
-🎯 **Simplified Filtering** - Filter by tags, categories, products, dates, and status—no OData knowledge needed.
-⚡ **Fast Response** - Local SQLite replication ensures <500ms query response times.
-🔄 **Automatic Sync** - Differential synchronization keeps data fresh (configurable interval, default 24h).
-📊 **Help Resource** - Expose all available filters and data freshness to help AI construct queries.
+- 🔍 **Better Keyword Matching** - Full-text search (FTS5) across titles and descriptions with BM25 relevance ranking, offering improved query search than the original API.
+- 🎯 **Simplified Filtering** - Filter by tags, categories, products, dates, and status—no OData knowledge needed.
+- ⚡ **Fast Response** - Local SQLite replication ensures <500ms query response times.
+- 🔄 **Automatic Sync** - Differential synchronization keeps data fresh (configurable interval, default 24h).
+- 📊 **Help Resource** - Expose all available filters and data freshness to help AI construct queries.
 
 ## Setup
 
