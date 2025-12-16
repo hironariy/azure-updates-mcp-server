@@ -6,7 +6,7 @@
         "properties": {
             "query": {
                 "type": "string",
-                "description": "Natural language search query or keywords to match across title, description, tags, product categories, and products. Uses full-text search with BM25 relevance ranking. Leave empty to filter only without keyword search."
+                "description": "Natural language search query or keywords. Searches across multiple fields: title, description (HTML content), tags, productCategories, and products. Uses full-text search with BM25 relevance ranking. Leave empty to filter only without keyword search."
             },
             "filters": {
                 "type": "object",
