@@ -21,7 +21,7 @@
 
 **Purpose**: No setup required - using existing infrastructure
 
-- [ ] T001 Verify existing TypeScript project configuration and dependencies are sufficient
+- [X] T001 Verify existing TypeScript project configuration and dependencies are sufficient
 
 ---
 
@@ -29,9 +29,9 @@
 
 **Purpose**: Core type definitions that both user stories depend on
 
-- [ ] T002 Add `AzureUpdateSummary` type to src/models/azure-update.ts using `Omit<AzureUpdate, 'description'>`
-- [ ] T003 [P] Remove `id` parameter from `SearchQuery` type in src/models/search-query.ts
-- [ ] T004 [P] Add `SortBy` type definition to src/models/search-query.ts supporting relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc
+- [X] T002 Add `AzureUpdateSearchSummary` type to src/models/azure-update.ts using `Omit<AzureUpdate, 'description' | 'descriptionMarkdown'>`
+- [X] T003 [P] Remove `id` parameter from `SearchQuery` type in src/models/search-query.ts
+- [X] T004 [P] Add `SortBy` type definition to src/models/search-query.ts supporting relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc
 
 **Checkpoint**: Type definitions ready - user story implementation can begin
 
@@ -45,13 +45,13 @@
 
 ### Implementation for User Story 1 ✅
 
-- [ ] T005 [P] [US1] Create `get_azure_update` tool handler in src/tools/get-azure-update.tool.ts with input validation
-- [ ] T006 [US1] Implement tool logic in src/tools/get-azure-update.tool.ts: call database.getUpdateById(), handle not-found errors
-- [ ] T007 [US1] Add JSDoc documentation to src/tools/get-azure-update.tool.ts handler function
-- [ ] T008 [US1] Register `get_azure_update` tool in src/server.ts tools list
-- [ ] T009 [US1] Add tool schema definition to src/server.ts for `get_azure_update` (input: id string, required)
-- [ ] T010 [P] [US1] Create unit tests for get_azure_update tool in tests/unit/tools/get-azure-update.test.ts (valid ID, invalid ID, missing ID)
-- [ ] T011 [US1] Verify test coverage ≥80% for get_azure_update tool handler
+- [X] T005 [P] [US1] Create `get_azure_update` tool handler in src/tools/get-azure-update.tool.ts with input validation
+- [X] T006 [US1] Implement tool logic in src/tools/get-azure-update.tool.ts: call database.getUpdateById(), handle not-found errors
+- [X] T007 [US1] Add JSDoc documentation to src/tools/get-azure-update.tool.ts handler function
+- [X] T008 [US1] Register `get_azure_update` tool in src/server.ts tools list
+- [X] T009 [US1] Add tool schema definition to src/server.ts for `get_azure_update` (input: id string, required)
+- [X] T010 [P] [US1] Create unit tests for get_azure_update tool in tests/unit/tools/get-azure-update.test.ts (valid ID, invalid ID, missing ID)
+- [X] T011 [US1] Verify test coverage ≥80% for get_azure_update tool handler
 
 **Checkpoint**: `get_azure_update` tool fully functional and independently testable
 
@@ -65,13 +65,13 @@
 
 ### Implementation for User Story 2 ✅
 
-- [ ] T012 [P] [US2] Remove `id` parameter handling from src/tools/search-azure-updates.tool.ts input validation
-- [ ] T013 [US2] Modify result projection in src/tools/search-azure-updates.tool.ts to return `AzureUpdateSummary[]` (omit description)
-- [ ] T014 [US2] Update tool schema in src/server.ts for `search_azure_updates` to remove `id` parameter from input
-- [ ] T015 [US2] Update tool description in src/server.ts to mention two-tool pattern (search → get)
-- [ ] T016 [P] [US2] Update unit tests in tests/unit/tools/search-azure-updates.test.ts to expect no description fields in results
-- [ ] T017 [P] [US2] Add test in tests/unit/tools/search-azure-updates.test.ts to verify `id` parameter is rejected
-- [ ] T018 [US2] Verify test coverage ≥80% for search_azure_updates tool handler
+- [X] T012 [P] [US2] Remove `id` parameter handling from src/tools/search-azure-updates.tool.ts input validation
+- [X] T013 [US2] Modify result projection in src/tools/search-azure-updates.tool.ts to return `AzureUpdateSearchSummary[]` (omit description)
+- [X] T014 [US2] Update tool schema in src/server.ts for `search_azure_updates` to remove `id` parameter from input
+- [X] T015 [US2] Update tool description in src/server.ts to mention two-tool pattern (search → get)
+- [X] T016 [P] [US2] Update unit tests in tests/unit/tools/search-azure-updates.test.ts to expect no description fields in results
+- [X] T017 [P] [US2] Add test in tests/unit/tools/search-azure-updates.test.ts to verify `id` parameter is rejected
+- [X] T018 [US2] Verify test coverage ≥80% for search_azure_updates tool handler
 
 **Checkpoint**: `search_azure_updates` returns lightweight results, `id` parameter removed
 
@@ -85,18 +85,18 @@
 
 ### Implementation for User Story 3 ✅
 
-- [ ] T019 [P] [US3] Add `retirementDateFrom` and `retirementDateTo` filter parameters to src/tools/search-azure-updates.tool.ts input handling
-- [ ] T020 [P] [US3] Add `sortBy` parameter to src/tools/search-azure-updates.tool.ts with enum validation (relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc)
-- [ ] T021 [US3] Implement retirement date filtering logic in src/tools/search-azure-updates.tool.ts (filter availabilities array where ring='Retirement')
-- [ ] T022 [US3] Implement sortBy logic in src/tools/search-azure-updates.tool.ts with direction parsing (split on ':')
-- [ ] T023 [US3] Implement retirementDate sorting in src/tools/search-azure-updates.tool.ts (extract retirement date from availabilities, exclude updates without Retirement ring)
-- [ ] T024 [US3] Update tool schema in src/server.ts to add `retirementDateFrom/To` and `sortBy` parameters with descriptions
-- [ ] T025 [US3] Update default limit from 50 to 20 in src/server.ts schema
-- [ ] T026 [US3] Clarify offset parameter description in src/server.ts with pagination example
-- [ ] T027 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirement date filtering
-- [ ] T028 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for sortBy parameter (all directions)
-- [ ] T029 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirementDate sorting edge cases (no Retirement ring)
-- [ ] T030 [US3] Verify test coverage ≥80% for new filtering and sorting logic
+- [X] T019 [P] [US3] Add `retirementDateFrom` and `retirementDateTo` filter parameters to src/tools/search-azure-updates.tool.ts input handling
+- [X] T020 [P] [US3] Add `sortBy` parameter to src/tools/search-azure-updates.tool.ts with enum validation (relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc)
+- [X] T021 [US3] Implement retirement date filtering logic in src/tools/search-azure-updates.tool.ts (filter availabilities array where ring='Retirement')
+- [X] T022 [US3] Implement sortBy logic in src/tools/search-azure-updates.tool.ts with direction parsing (split on ':')
+- [X] T023 [US3] Implement retirementDate sorting in src/tools/search-azure-updates.tool.ts (extract retirement date from availabilities, exclude updates without Retirement ring)
+- [X] T024 [US3] Update tool schema in src/server.ts to add `retirementDateFrom/To` and `sortBy` parameters with descriptions
+- [X] T025 [US3] Update default limit from 50 to 20 in src/server.ts schema
+- [X] T026 [US3] Clarify offset parameter description in src/server.ts with pagination example
+- [X] T027 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirement date filtering
+- [X] T028 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for sortBy parameter (all directions)
+- [X] T029 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirementDate sorting edge cases (no Retirement ring)
+- [X] T030 [US3] Verify test coverage ≥80% for new filtering and sorting logic
 
 **Checkpoint**: Retirement date filtering and sorting fully functional
 
@@ -108,21 +108,21 @@
 
 ### Guide Resource Updates
 
-- [ ] T031 [P] Remove `id` parameter example from src/resources/guide.resource.ts usage examples
-- [ ] T032 [P] Update overview in src/resources/guide.resource.ts to mention two-tool architecture (search for discovery, get for details)
-- [ ] T033 [P] Add query tips in src/resources/guide.resource.ts: explain tags/categories/products are searchable via query parameter
-- [ ] T034 [P] Add query tips in src/resources/guide.resource.ts: explain sortBy with direction suffixes
-- [ ] T035 [P] Add query tips in src/resources/guide.resource.ts: explain retirementDateFrom/To filters
-- [ ] T036 Add query tip in src/resources/guide.resource.ts: explain two-step workflow (search → get_azure_update)
-- [ ] T037 Update usage examples in src/resources/guide.resource.ts to use simplified filtering (query parameter instead of individual filters)
-- [ ] T038 Update usage examples in src/resources/guide.resource.ts to show sortBy and retirement date filtering
+- [X] T031 [P] Remove `id` parameter example from src/resources/guide.resource.ts usage examples
+- [X] T032 [P] Update overview in src/resources/guide.resource.ts to mention two-tool architecture (search for discovery, get for details)
+- [X] T033 [P] Add query tips in src/resources/guide.resource.ts: explain tags/categories/products are searchable via query parameter
+- [X] T034 [P] Add query tips in src/resources/guide.resource.ts: explain sortBy with direction suffixes
+- [X] T035 [P] Add query tips in src/resources/guide.resource.ts: explain retirementDateFrom/To filters
+- [X] T036 Add query tip in src/resources/guide.resource.ts: explain two-step workflow (search → get_azure_update)
+- [X] T037 Update usage examples in src/resources/guide.resource.ts to use simplified filtering (query parameter instead of individual filters)
+- [X] T038 Update usage examples in src/resources/guide.resource.ts to show sortBy and retirement date filtering
 
 ### Integration Testing
 
-- [ ] T039 [P] Add integration test in tests/integration/tools-integration.test.ts for two-step workflow (search → get by ID)
-- [ ] T040 [P] Add integration test in tests/integration/tools-integration.test.ts to verify search response size reduction (compare with old version)
-- [ ] T041 Update existing integration tests in tests/integration/tools-integration.test.ts to expect no description in search results
-- [ ] T042 Verify guide resource tests in tests/unit/resources/guide.test.ts reflect updated examples and tips
+- [X] T039 [P] Add integration test in tests/integration/tools-integration.test.ts for two-step workflow (search → get by ID)
+- [X] T040 [P] Add integration test in tests/integration/tools-integration.test.ts to verify search response size reduction (compare with old version)
+- [X] T041 Update existing integration tests in tests/integration/tools-integration.test.ts to expect no description in search results
+- [X] T042 Verify guide resource tests in tests/unit/resources/guide.test.ts reflect updated examples and tips
 
 ---
 
@@ -130,14 +130,14 @@
 
 **Constitution Compliance Checks**:
 
-- [ ] T043 [P] Run test coverage report and verify ≥80% coverage across modified files
-- [ ] T044 [P] Run ESLint on all modified files - zero warnings/errors
-- [ ] T045 [P] Check cyclomatic complexity ≤10 for all new/modified functions
-- [ ] T046 [P] Verify TypeScript strict mode compliance - no `any` types without justification
-- [ ] T047 [P] Verify JSDoc documentation completeness for all public APIs
-- [ ] T048 Code cleanup and refactoring pass (DRY violations, naming consistency)
-- [ ] T049 [P] Update contracts/README.md to document two-tool pattern
-- [ ] T050 Test quickstart.md examples manually to ensure accuracy
+- [X] T043 [P] Run test coverage report and verify ≥80% coverage across modified files
+- [X] T044 [P] Run ESLint on all modified files - zero warnings/errors
+- [X] T045 [P] Check cyclomatic complexity ≤10 for all new/modified functions
+- [X] T046 [P] Verify TypeScript strict mode compliance - no `any` types without justification
+- [X] T047 [P] Verify JSDoc documentation completeness for all public APIs
+- [X] T048 Code cleanup and refactoring pass (DRY violations, naming consistency)
+- [X] T049 [P] Update contracts/README.md to document two-tool pattern
+- [X] T050 Test quickstart.md examples manually to ensure accuracy
 
 ---
 

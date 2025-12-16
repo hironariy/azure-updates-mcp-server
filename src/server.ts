@@ -15,6 +15,7 @@ import type Database from 'better-sqlite3';
 
 import * as logger from './utils/logger.js';
 import { handleSearchAzureUpdates } from './tools/search-azure-updates.tool.js';
+import { handleGetAzureUpdate } from './tools/get-azure-update.tool.js';
 import { getGuideResourceResponse } from './resources/guide.resource.js';
 
 /**
@@ -67,11 +68,28 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
         return {
             tools: [
                 {
+                    name: 'get_azure_update',
+                    description:
+                        'Retrieve the complete details of a specific Azure update by its ID, including the full ' +
+                        'description in Markdown format. Use this after search_azure_updates to get detailed content.',
+                    inputSchema: {
+                        type: 'object',
+                        properties: {
+                            id: {
+                                type: 'string',
+                                description: 'Unique identifier of the Azure update (required)',
+                            },
+                        },
+                        required: ['id'],
+                    },
+                },
+                {
                     name: 'search_azure_updates',
                     description:
-                        'Search, filter, and retrieve Azure service updates. Supports natural language queries with ' +
-                        'keyword matching, multi-dimensional filtering (tags, categories, products, dates), and ' +
-                        'fetching specific updates by ID. This is the primary tool for accessing Azure Updates data.',
+                        'Search and filter Azure service updates. Returns lightweight metadata (id, title, status, tags, ' +
+                        'categories, products, availabilities, timestamps) without descriptions for efficient token usage. ' +
+                        'Supports natural language queries with keyword matching and structured filtering. ' +
+                        'Use get_azure_update to retrieve full details including descriptions.',
                     inputSchema: {
                         type: 'object',
                         properties: {
@@ -81,30 +99,10 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                                     'Natural language search query or keywords to match in title and description. ' +
                                     'Uses full-text search with BM25 relevance ranking. Leave empty to filter only without keyword search.',
                             },
-                            id: {
-                                type: 'string',
-                                description:
-                                    'Fetch a specific Azure update by its unique ID. When provided, all other parameters are ignored.',
-                            },
                             filters: {
                                 type: 'object',
                                 description: 'Structured filters to narrow down search results. All filters use AND logic.',
                                 properties: {
-                                    tags: {
-                                        type: 'array',
-                                        items: { type: 'string' },
-                                        description: "Filter by update tags (e.g., ['Retirements', 'Security'])",
-                                    },
-                                    productCategories: {
-                                        type: 'array',
-                                        items: { type: 'string' },
-                                        description: "Filter by Azure product categories (e.g., ['Compute', 'AI + Machine Learning'])",
-                                    },
-                                    products: {
-                                        type: 'array',
-                                        items: { type: 'string' },
-                                        description: "Filter by specific Azure products (e.g., ['Azure Virtual Machines'])",
-                                    },
                                     status: {
                                         type: 'string',
                                         description: "Filter by update status (e.g., 'Active', 'Retired')",
@@ -122,17 +120,30 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                                         type: 'string',
                                         description: 'ISO 8601 date - include updates modified/available on or before this date',
                                     },
+                                    retirementDateFrom: {
+                                        type: 'string',
+                                        description: 'ISO 8601 date - include updates with retirement date on or after this date (filters by Retirement availability ring)',
+                                    },
+                                    retirementDateTo: {
+                                        type: 'string',
+                                        description: 'ISO 8601 date - include updates with retirement date on or before this date (filters by Retirement availability ring)',
+                                    },
                                 },
+                            },
+                            sortBy: {
+                                type: 'string',
+                                enum: ['relevance', 'modified:desc', 'modified:asc', 'created:desc', 'created:asc', 'retirementDate:asc', 'retirementDate:desc'],
+                                description: 'Sort order. Default is "relevance" for keyword searches, "modified:desc" for filter-only. retirementDate sorts require Retirement availability ring.',
                             },
                             limit: {
                                 type: 'number',
-                                description: 'Maximum number of results to return (1-100, default: 50)',
+                                description: 'Maximum number of results to return (1-100, default: 20)',
                                 minimum: 1,
                                 maximum: 100,
                             },
                             offset: {
                                 type: 'number',
-                                description: 'Number of results to skip for pagination (default: 0)',
+                                description: 'Number of results to skip for pagination. Example: offset=20 with limit=20 returns results 21-40. (default: 0)',
                                 minimum: 0,
                             },
                         },
@@ -147,6 +158,10 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
         logger.info('CallTool request received', {
             tool: request.params.name,
         });
+
+        if (request.params.name === 'get_azure_update') {
+            return handleGetAzureUpdate(db, request.params.arguments);
+        }
 
         if (request.params.name === 'search_azure_updates') {
             return handleSearchAzureUpdates(db, request.params.arguments);

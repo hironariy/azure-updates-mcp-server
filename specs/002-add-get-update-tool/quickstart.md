@@ -18,22 +18,29 @@ Search and filter Azure updates, returning lightweight results with metadata onl
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `query` | string | No | Natural language search query for keyword matching in title and description |
-| `filters` | object | No | Structured filters (tags, categories, products, dates, etc.) |
-| `limit` | number | No | Maximum results to return (1-100, default: 50) |
+| `query` | string | No | Natural language search query - searches across title, description, tags, categories, products |
+| `filters` | object | No | Structured filters (status, availability ring, dates, retirement dates) |
+| `sortBy` | string | No | Sort order: relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc (default: relevance for keyword searches, modified:desc otherwise) |
+| `limit` | number | No | Maximum results to return (1-100, default: 20) |
 | `offset` | number | No | Number of results to skip for pagination (default: 0) |
 
 **Note**: The `id` parameter has been **removed**. Use `get_azure_update` instead.
 
-### Example: Search by Tags and Date
+**Key Changes**:
+- Tags, categories, and products are now searchable via the `query` parameter (no separate filter arrays)
+- Added `sortBy` parameter for flexible sorting
+- Added `retirementDateFrom` and `retirementDateTo` filters for retirement planning
+
+### Example: Search for Upcoming Retirements
 
 ```json
 {
+  "query": "retirement Compute",
   "filters": {
-    "tags": ["Retirements"],
-    "productCategories": ["Compute"],
-    "dateFrom": "2026-01-01"
+    "retirementDateFrom": "2026-01-01",
+    "retirementDateTo": "2026-12-31"
   },
+  "sortBy": "retirementDate:asc",
   "limit": 10
 }
 ```
@@ -127,13 +134,15 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 
 ### Workflow 1: Find Retirements and Get Details
 
-**Step 1**: Search for retirements
+**Step 1**: Search for upcoming retirements sorted by date
 ```json
 {
+  "query": "retirement",
   "filters": {
-    "tags": ["Retirements"],
-    "dateFrom": "2026-01-01"
+    "retirementDateFrom": "2026-01-01",
+    "retirementDateTo": "2026-12-31"
   },
+  "sortBy": "retirementDate:asc",
   "limit": 20
 }
 ```
@@ -149,14 +158,14 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 
 ### Workflow 2: Keyword Search + Detail Retrieval
 
-**Step 1**: Search for security-related updates
+**Step 1**: Search for security-related updates (tags are searchable via query)
 ```json
 {
   "query": "OAuth authentication security",
   "filters": {
-    "tags": ["Security"],
     "dateFrom": "2025-01-01"
-  }
+  },
+  "sortBy": "modified:desc"
 }
 ```
 
@@ -171,12 +180,11 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 
 ### Workflow 3: Browse by Category
 
-**Step 1**: List all AI/ML updates
+**Step 1**: Search for AI/ML updates (categories are searchable via query)
 ```json
 {
-  "filters": {
-    "productCategories": ["AI + Machine Learning"]
-  },
+  "query": "AI Machine Learning",
+  "sortBy": "modified:desc",
   "limit": 50
 }
 ```

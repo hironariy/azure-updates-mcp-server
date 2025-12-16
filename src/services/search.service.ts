@@ -15,7 +15,6 @@ import type {
     SearchResponse,
 } from '../models/search-query.js';
 import {
-    getUpdateById,
     getTagsForUpdate,
     getCategoriesForUpdate,
     getProductsForUpdate,
@@ -24,31 +23,8 @@ import {
 import * as logger from '../utils/logger.js';
 
 // Constants for pagination limits
-const DEFAULT_LIMIT = 50;
+const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
-
-/**
- * Handle get-by-ID query
- * 
- * @param db Database instance
- * @param id Update ID
- * @param startTime Query start time for metrics
- * @returns Search response with single result or empty
- */
-function handleGetById(
-    db: Database.Database,
-    id: string,
-    startTime: number
-): SearchResponse<AzureUpdateSearchResult> {
-    const update = getUpdateById(db, id);
-    const queryTime = Date.now() - startTime;
-
-    if (!update) {
-        return createSearchResponse([], 0, 1, 0, queryTime);
-    }
-
-    return createSearchResponse([update], 1, 1, 0, queryTime);
-}
 
 /**
  * Create search response with metadata
@@ -93,16 +69,11 @@ export function searchUpdates(
 ): SearchResponse<AzureUpdateSearchResult> {
     const startTime = Date.now();
 
-    // Handle get-by-ID case (overrides all other params)
-    if (query.id) {
-        return handleGetById(db, query.id, startTime);
-    }
-
     // Build search query with enforced limits
     const limit = Math.min(query.limit ?? DEFAULT_LIMIT, MAX_LIMIT);
     const offset = query.offset ?? 0;
 
-    const { sql, params } = buildSearchQuery(query.query, query.filters, limit, offset);
+    const { sql, params } = buildSearchQuery(query.query, query.filters, query.sortBy, limit, offset);
 
     // T062: Log query performance metrics
     logger.debug('Executing search query', {
@@ -174,6 +145,7 @@ export function searchUpdates(
  * 
  * @param keyword Optional keyword search query
  * @param filters Optional structured filters
+ * @param sortBy Optional sort parameter
  * @param limit Result limit
  * @param offset Result offset
  * @returns SQL query and parameters
@@ -181,6 +153,7 @@ export function searchUpdates(
 function buildSearchQuery(
     keyword: string | undefined,
     filters: SearchFilters | undefined,
+    sortBy: string | undefined,
     limit: number,
     offset: number
 ): { sql: string; params: unknown[] } {
@@ -216,10 +189,12 @@ function buildSearchQuery(
 
         const whereClause = whereClauses.length > 0 ? `AND ${whereClauses.join(' AND ')}` : '';
 
+        const orderByClause = buildOrderByClause(sortBy, true);
+
         const sql = `
             ${baseQuery}
             ${whereClause}
-            ORDER BY fts.rank, au.modified DESC
+            ${orderByClause}
             LIMIT ? OFFSET ?
         `;
 
@@ -246,10 +221,12 @@ function buildSearchQuery(
 
     const whereClause = filterClauses.length > 0 ? `WHERE ${filterClauses.join(' AND ')}` : '';
 
+    const orderByClause = buildOrderByClause(sortBy, false);
+
     const sql = `
         ${baseQuery}
         ${whereClause}
-        ORDER BY au.modified DESC
+        ${orderByClause}
         LIMIT ? OFFSET ?
     `;
 
@@ -324,11 +301,6 @@ function buildFilterClauses(
 
     const clauses: string[] = [];
 
-    // Array filters (tags, categories, products)
-    addArrayFilterClause(clauses, params, filters.tags, 'update_tags', 'ut', 'tag');
-    addArrayFilterClause(clauses, params, filters.productCategories, 'update_categories', 'uc', 'category');
-    addArrayFilterClause(clauses, params, filters.products, 'update_products', 'up', 'product');
-
     // Status filter
     if (filters.status) {
         clauses.push('au.status = ?');
@@ -355,48 +327,28 @@ function buildFilterClauses(
         params.push(filters.dateTo);
     }
 
-    return clauses;
-}
-
-/**
- * Helper to add array filter clauses
- */
-function addArrayFilterClause(
-    clauses: string[],
-    params: unknown[],
-    values: string[] | undefined,
-    tableName: string,
-    tableAlias: string,
-    columnName: string
-): void {
-    if (values && values.length > 0) {
-        clauses.push(buildExistsClause(tableName, tableAlias, columnName, values.length));
-        params.push(...values);
+    // Retirement date range filters
+    if (filters.retirementDateFrom) {
+        clauses.push(`EXISTS (
+            SELECT 1 FROM update_availabilities ua 
+            WHERE ua.update_id = au.id 
+              AND ua.ring = 'Retirement' 
+              AND ua.date >= ?
+        )`);
+        params.push(filters.retirementDateFrom);
     }
-}
 
-/**
- * Build an EXISTS clause for array filters with OR logic
- * 
- * @param tableName Table name to query
- * @param tableAlias Table alias
- * @param columnName Column name to match
- * @param count Number of values to match
- * @returns SQL EXISTS clause string
- */
-function buildExistsClause(
-    tableName: string,
-    tableAlias: string,
-    columnName: string,
-    count: number
-): string {
-    const conditions = Array(count)
-        .fill(null)
-        .map(() => `EXISTS (
-                SELECT 1 FROM ${tableName} ${tableAlias} 
-                WHERE ${tableAlias}.update_id = au.id AND ${tableAlias}.${columnName} = ?
-            )`);
-    return `(${conditions.join(' OR ')})`;
+    if (filters.retirementDateTo) {
+        clauses.push(`EXISTS (
+            SELECT 1 FROM update_availabilities ua 
+            WHERE ua.update_id = au.id 
+              AND ua.ring = 'Retirement' 
+              AND ua.date <= ?
+        )`);
+        params.push(filters.retirementDateTo);
+    }
+
+    return clauses;
 }
 
 /**
@@ -424,4 +376,52 @@ function sanitizeFtsQuery(query: string): string {
         });
 
     return words.join(' OR ');
+}
+
+/**
+ * Get retirement date subquery for sorting
+ * 
+ * @returns SQL subquery to retrieve retirement date
+ */
+function getRetirementDateSubquery(): string {
+    return `(
+        SELECT ua.date 
+        FROM update_availabilities ua 
+        WHERE ua.update_id = au.id AND ua.ring = 'Retirement' 
+        LIMIT 1
+    )`;
+}
+
+/**
+ * Get default order by clause
+ * 
+ * @param hasKeywordSearch Whether this is a keyword search
+ * @returns Default ORDER BY clause
+ */
+function getDefaultOrderBy(hasKeywordSearch: boolean): string {
+    return hasKeywordSearch ? 'ORDER BY fts.rank, au.modified DESC' : 'ORDER BY au.modified DESC';
+}
+
+/**
+ * Build ORDER BY clause based on sortBy parameter
+ * 
+ * @param sortBy Sort parameter (e.g., 'modified:desc', 'retirementDate:asc')
+ * @param hasKeywordSearch Whether this is a keyword search (uses FTS relevance)
+ * @returns SQL ORDER BY clause
+ */
+function buildOrderByClause(sortBy: string | undefined, hasKeywordSearch: boolean): string {
+    if (!sortBy || sortBy === 'relevance') {
+        return getDefaultOrderBy(hasKeywordSearch);
+    }
+
+    const sortMap: Record<string, string> = {
+        'modified:desc': 'ORDER BY au.modified DESC',
+        'modified:asc': 'ORDER BY au.modified ASC',
+        'created:desc': 'ORDER BY au.created DESC',
+        'created:asc': 'ORDER BY au.created ASC',
+        'retirementDate:asc': `ORDER BY ${getRetirementDateSubquery()} ASC`,
+        'retirementDate:desc': `ORDER BY ${getRetirementDateSubquery()} DESC`,
+    };
+
+    return sortMap[sortBy] ?? getDefaultOrderBy(hasKeywordSearch);
 }

@@ -51,7 +51,14 @@ export interface AzureUpdateRecord {
 }
 
 /**
- * Search result with relevance score
+ * Lightweight search result (excludes description fields to reduce token usage)
+ * Used by search_azure_updates for efficient discovery
+ */
+export type AzureUpdateSearchSummary = Omit<AzureUpdate, 'description' | 'descriptionMarkdown'>;
+
+/**
+ * Full search result with relevance score (includes description)
+ * Used internally by search service before filtering
  */
 export interface AzureUpdateSearchResult extends AzureUpdate {
     relevanceScore?: number; // BM25 relevance score from FTS5

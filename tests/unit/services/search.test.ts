@@ -145,51 +145,6 @@ describe('Search Service', () => {
             expect(result.metadata.totalResults).toBe(3);
         });
 
-        it('should filter by tags', () => {
-            const query: SearchQuery = {
-                filters: {
-                    tags: ['Retirements'],
-                },
-                limit: 10,
-                offset: 0,
-            };
-
-            const result = searchUpdates(db, query);
-
-            expect(result.results.length).toBe(1);
-            expect(result.results[0].tags).toContain('Retirements');
-        });
-
-        it('should filter by product categories', () => {
-            const query: SearchQuery = {
-                filters: {
-                    productCategories: ['Compute'],
-                },
-                limit: 10,
-                offset: 0,
-            };
-
-            const result = searchUpdates(db, query);
-
-            expect(result.results.length).toBe(1);
-            expect(result.results[0].productCategories).toContain('Compute');
-        });
-
-        it('should filter by products', () => {
-            const query: SearchQuery = {
-                filters: {
-                    products: ['Azure SQL Database'],
-                },
-                limit: 10,
-                offset: 0,
-            };
-
-            const result = searchUpdates(db, query);
-
-            expect(result.results.length).toBe(1);
-            expect(result.results[0].products).toContain('Azure SQL Database');
-        });
-
         it('should filter by status', () => {
             const query: SearchQuery = {
                 filters: {
@@ -277,29 +232,6 @@ describe('Search Service', () => {
             expect(result2.results.length).toBe(1);
             expect(result1.results[0].id).not.toBe(result2.results[0].id);
             expect(result1.metadata.hasMore).toBe(true);
-        });
-
-        it('should get update by ID', () => {
-            const query: SearchQuery = {
-                id: 'test-1',
-            };
-
-            const result = searchUpdates(db, query);
-
-            expect(result.results.length).toBe(1);
-            expect(result.results[0].id).toBe('test-1');
-            expect(result.results[0].title).toContain('Virtual Machines');
-        });
-
-        it('should return empty results for non-existent ID', () => {
-            const query: SearchQuery = {
-                id: 'non-existent',
-            };
-
-            const result = searchUpdates(db, query);
-
-            expect(result.results.length).toBe(0);
-            expect(result.metadata.totalResults).toBe(0);
         });
 
         it('should respect limit parameter', () => {

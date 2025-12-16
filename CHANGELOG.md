@@ -15,6 +15,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Historical versioning of updates
 - Multi-language support
 
+## [1.1.0] - 2025-12-17
+
+### Added
+
+- **Two-Tool Architecture**: Split search and detail retrieval into separate tools for 80%+ token reduction
+  - `search_azure_updates`: Lightweight discovery returning metadata only (no descriptions)
+  - `get_azure_update`: Full detail retrieval by ID including complete Markdown description
+- **Advanced Sorting**: `sortBy` parameter supporting relevance, modified date, created date, and retirement date sorting
+- **Retirement Date Filtering**: New `retirementDateFrom` and `retirementDateTo` filters for proactive retirement planning
+- **Simplified Query Interface**: Tags, categories, and products now searchable directly via `query` parameter
+- **Integration Tests**: Comprehensive two-tool workflow and response validation tests
+
+### Changed
+
+- **BREAKING**: Removed `id` parameter from `search_azure_updates` - use `get_azure_update` instead
+- **BREAKING**: Search results no longer include `description` or `descriptionMarkdown` fields
+- Default result limit reduced from 50 to 20 for better token efficiency
+- Updated guide resource to document two-tool workflow and new features
+
+### Improved
+
+- Reduced cyclomatic complexity in search service (buildOrderByClause: 12→7, buildSearchFilters: 11→4)
+- Enhanced type safety by removing non-null assertions
+- Better code organization with extracted helper functions
+
+### Performance
+
+- Search response size: 80-90% reduction per result (excludes descriptions)
+- Average search result: ~500-700 bytes (previously ~2-5KB)
+- Two-step workflow recommended: search broad, retrieve narrow
+
 ## [1.0.0] - 2025-12-16
 
 ### Added
@@ -65,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
+- **1.1.0** (2025-12-17): Two-tool architecture for token efficiency
 - **1.0.0** (2025-12-16): First stable release with full feature set
 - **0.1.0** (2025-12-16): Initial development version
 

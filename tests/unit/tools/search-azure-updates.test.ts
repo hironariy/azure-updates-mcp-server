@@ -37,6 +37,51 @@ describe('Search Azure Updates Tool', () => {
         );
 
         db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('test-1', 'Security');
+
+        // Add test data with retirement dates for sorting/filtering tests
+        db.prepare(`
+            INSERT INTO azure_updates (id, title, description_html, description_md, status, locale, created, modified)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            'retire-1',
+            'Service A Retirement',
+            '<p>Retiring soon</p>',
+            'Retiring soon',
+            'Active',
+            'en-us',
+            '2025-01-01T00:00:00.0000000Z',
+            '2025-01-15T00:00:00.0000000Z'
+        );
+
+        db.prepare(`
+            INSERT INTO azure_updates (id, title, description_html, description_md, status, locale, created, modified)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            'retire-2',
+            'Service B Retirement',
+            '<p>Retiring later</p>',
+            'Retiring later',
+            'Active',
+            'en-us',
+            '2025-01-01T00:00:00.0000000Z',
+            '2025-01-10T00:00:00.0000000Z'
+        );
+
+        // Add retirement dates
+        db.prepare('INSERT INTO update_availabilities (update_id, ring, date) VALUES (?, ?, ?)').run(
+            'retire-1',
+            'Retirement',
+            '2026-03-31'
+        );
+
+        db.prepare('INSERT INTO update_availabilities (update_id, ring, date) VALUES (?, ?, ?)').run(
+            'retire-2',
+            'Retirement',
+            '2026-06-30'
+        );
+
+        db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('retire-1', 'Retirements');
+        db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('retire-2', 'Retirements');
     });
 
     afterEach(() => {
@@ -91,22 +136,6 @@ describe('Search Azure Updates Tool', () => {
 
             expect(response.error).toBe('Validation failed');
             expect(response.details).toContain('filters must be an object');
-        });
-
-        it('should reject invalid tags type', () => {
-            const result = handleSearchAzureUpdates(db, { filters: { tags: 'not-array' } });
-            const response = JSON.parse(result.content[0].text);
-
-            expect(response.error).toBe('Validation failed');
-            expect(response.details).toContain('filters.tags must be an array');
-        });
-
-        it('should reject non-string tags', () => {
-            const result = handleSearchAzureUpdates(db, { filters: { tags: [123] } });
-            const response = JSON.parse(result.content[0].text);
-
-            expect(response.error).toBe('Validation failed');
-            expect(response.details).toContain('filters.tags must be an array of strings');
         });
 
         it('should reject invalid availability ring', () => {
@@ -172,22 +201,15 @@ describe('Search Azure Updates Tool', () => {
             expect(response.metadata.queryTime).toBeDefined();
         });
 
-        it('should return update by ID', () => {
-            const result = handleSearchAzureUpdates(db, { id: 'test-1' });
-            const response = JSON.parse(result.content[0].text);
-
-            expect(response.results.length).toBe(1);
-            expect(response.results[0].id).toBe('test-1');
-        });
-
-        it('should include all update fields', () => {
-            const result = handleSearchAzureUpdates(db, { id: 'test-1' });
+        it('should include all update fields (excluding description)', () => {
+            const result = handleSearchAzureUpdates(db, {});
             const response = JSON.parse(result.content[0].text);
 
             const update = response.results[0];
             expect(update).toHaveProperty('id');
             expect(update).toHaveProperty('title');
-            expect(update).toHaveProperty('description');
+            expect(update).not.toHaveProperty('description'); // Lightweight: no description
+            expect(update).not.toHaveProperty('descriptionMarkdown'); // Lightweight: no description
             expect(update).toHaveProperty('status');
             expect(update).toHaveProperty('tags');
             expect(update).toHaveProperty('productCategories');
@@ -195,18 +217,6 @@ describe('Search Azure Updates Tool', () => {
             expect(update).toHaveProperty('availabilities');
             expect(update).toHaveProperty('created');
             expect(update).toHaveProperty('modified');
-        });
-
-        it('should apply filters correctly', () => {
-            const result = handleSearchAzureUpdates(db, {
-                filters: { tags: ['Security'] }
-            });
-            const response = JSON.parse(result.content[0].text);
-
-            expect(response.results.length).toBeGreaterThan(0);
-            response.results.forEach((update: { tags: string[] }) => {
-                expect(update.tags).toContain('Security');
-            });
         });
 
         it('should return correct response structure', () => {
@@ -235,13 +245,133 @@ describe('Search Azure Updates Tool', () => {
             expect(response.details).toBeDefined();
             expect(response.details).toContain('unexpected error');
         });
+    });
 
-        it('should return empty results for non-existent ID', () => {
-            const result = handleSearchAzureUpdates(db, { id: 'non-existent' });
+    describe('Retirement Date Filtering', () => {
+        it('should filter by retirement date from', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    retirementDateFrom: '2026-04-01',
+                },
+            });
             const response = JSON.parse(result.content[0].text);
 
-            expect(response.results.length).toBe(0);
-            expect(response.metadata.total).toBe(0);
+            expect(response.results.length).toBe(1);
+            expect(response.results[0].id).toBe('retire-2');
+        });
+
+        it('should filter by retirement date to', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    retirementDateTo: '2026-05-31',
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results.length).toBe(1);
+            expect(response.results[0].id).toBe('retire-1');
+        });
+
+        it('should filter by retirement date range', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    retirementDateFrom: '2026-01-01',
+                    retirementDateTo: '2026-12-31',
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results.length).toBe(2);
+            expect(response.results.some((r: { id: string }) => r.id === 'retire-1')).toBe(true);
+            expect(response.results.some((r: { id: string }) => r.id === 'retire-2')).toBe(true);
+        });
+
+        it('should validate retirement date format', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    retirementDateFrom: 'invalid-date',
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.error).toBe('Validation failed');
+            expect(response.details.some((d: string) => d.includes('retirementDateFrom') && d.includes('ISO 8601'))).toBe(true);
+        });
+    });
+
+    describe('SortBy Parameter', () => {
+        it('should sort by modified date descending (default)', () => {
+            const result = handleSearchAzureUpdates(db, {});
+            const response = JSON.parse(result.content[0].text);
+
+            // retire-1 has modified date 2025-01-15 (newest)
+            expect(response.results[0].id).toBe('retire-1');
+        });
+
+        it('should sort by modified date ascending', () => {
+            const result = handleSearchAzureUpdates(db, {
+                sortBy: 'modified:asc',
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // test-1 has modified date 2025-01-01 (oldest)
+            expect(response.results[0].id).toBe('test-1');
+        });
+
+        it('should sort by created date descending', () => {
+            const result = handleSearchAzureUpdates(db, {
+                sortBy: 'created:desc',
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // All have same created date, so order may vary
+            expect(response.results.length).toBeGreaterThan(0);
+        });
+
+        it('should sort by retirement date ascending', () => {
+            const result = handleSearchAzureUpdates(db, {
+                sortBy: 'retirementDate:asc',
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // retire-1 has retirement date 2026-03-31 (earliest)
+            const retirementUpdates = response.results.filter(
+                (r: { id: string }) => r.id.startsWith('retire-')
+            );
+            expect(retirementUpdates[0].id).toBe('retire-1');
+        });
+
+        it('should sort by retirement date descending', () => {
+            const result = handleSearchAzureUpdates(db, {
+                sortBy: 'retirementDate:desc',
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // retire-2 has retirement date 2026-06-30 (latest)
+            const retirementUpdates = response.results.filter(
+                (r: { id: string }) => r.id.startsWith('retire-')
+            );
+            expect(retirementUpdates[0].id).toBe('retire-2');
+        });
+
+        it('should reject invalid sortBy value', () => {
+            const result = handleSearchAzureUpdates(db, {
+                sortBy: 'invalid:sort',
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.error).toBe('Validation failed');
+            expect(response.details.some((d: string) => d.includes('sortBy must be one of'))).toBe(true);
+        });
+
+        it('should reject non-string sortBy', () => {
+            const result = handleSearchAzureUpdates(db, {
+                sortBy: 123,
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.error).toBe('Validation failed');
+            expect(response.details).toContain('sortBy must be a string');
         });
     });
 
