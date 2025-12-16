@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Code Quality**: Type safety, linting, coverage targets (80%+), documentation completeness verified
+- [ ] **Testing Strategy**: Test-first approach defined, test hierarchy planned (unit/integration/e2e)
+- [ ] **Maintainability**: YAGNI principles applied, dependencies justified, complexity assessed
+- [ ] **Cost Efficiency**: Resource usage estimated, caching strategy defined, infrastructure costs projected
+- [ ] **Workflow Compliance**: Specification complete, test plan documented, quality gates defined
 
 ## Project Structure
 

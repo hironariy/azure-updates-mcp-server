@@ -8,9 +8,11 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: Test-First Development is MANDATORY per constitution. All test tasks MUST be completed before implementation tasks.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+
+**Constitution Compliance**: All tasks must align with code quality, testing standards, maintainability, and cost-efficiency principles.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -50,7 +52,10 @@ description: "Task list template for feature implementation"
 
 - [ ] T001 Create project structure per implementation plan
 - [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T003 [P] Configure linting and formatting tools (enforce constitution quality standards)
+- [ ] T004 [P] Setup pre-commit hooks (linting, formatting, type checking)
+- [ ] T005 [P] Configure test framework with coverage reporting (80% minimum)
+- [ ] T006 [P] Setup CI/CD pipeline with quality gates (<10min build time)
 
 ---
 
@@ -62,12 +67,14 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T007 Setup database schema and migrations framework
+- [ ] T008 [P] Implement authentication/authorization framework
+- [ ] T009 [P] Setup API routing and middleware structure
+- [ ] T010 Create base models/entities that all stories depend on
+- [ ] T011 Configure error handling and logging infrastructure (cost-efficient structured logging)
+- [ ] T012 Setup environment configuration management
+- [ ] T013 [P] Implement caching layer (reduce API costs)
+- [ ] T014 [P] Setup monitoring and observability (cost-optimized metrics)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -79,21 +86,28 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1 (MANDATORY per TDD constitution) 🔴
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **CONSTITUTION REQUIREMENT: Write these tests FIRST, ensure they FAIL, then implement**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T015 [P] [US1] Unit tests for [component] with >80% coverage in tests/unit/test_[name].py
+- [ ] T016 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T017 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
 
-### Implementation for User Story 1
+**Quality Gate**: All tests written, reviewed, approved, and FAILING before T018 begins
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+### Implementation for User Story 1 ✅
+
+> **CONSTITUTION REQUIREMENT: Tests must be green before moving to next story**
+
+- [ ] T018 [P] [US1] Create [Entity1] model with type safety in src/models/[entity1].py
+- [ ] T019 [P] [US1] Create [Entity2] model with type safety in src/models/[entity2].py
+- [ ] T020 [US1] Implement [Service] with SRP in src/services/[service].py (depends on T018, T019)
+- [ ] T021 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T022 [US1] Add validation and error handling (complexity ≤10)
+- [ ] T023 [US1] Add structured logging (cost-optimized)
+- [ ] T024 [US1] Add API documentation (JSDoc/docstrings)
+- [ ] T025 [US1] Code review and refactoring (DRY, maintainability check)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -105,17 +119,22 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2 (MANDATORY per TDD constitution) 🔴
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T026 [P] [US2] Unit tests for [component] with >80% coverage in tests/unit/test_[name].py
+- [ ] T027 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T028 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
 
-### Implementation for User Story 2
+**Quality Gate**: All tests written, reviewed, approved, and FAILING before T029 begins
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+### Implementation for User Story 2 ✅
+
+- [ ] T029 [P] [US2] Create [Entity] model with type safety in src/models/[entity].py
+- [ ] T030 [US2] Implement [Service] with SRP in src/services/[service].py
+- [ ] T031 [US2] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T032 [US2] Add validation, error handling, and documentation
+- [ ] T033 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T034 [US2] Code review and refactoring
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -127,16 +146,21 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3 (MANDATORY per TDD constitution) 🔴
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T035 [P] [US3] Unit tests for [component] with >80% coverage in tests/unit/test_[name].py
+- [ ] T036 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T037 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
 
-### Implementation for User Story 3
+**Quality Gate**: All tests written, reviewed, approved, and FAILING before T038 begins
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+### Implementation for User Story 3 ✅
+
+- [ ] T038 [P] [US3] Create [Entity] model with type safety in src/models/[entity].py
+- [ ] T039 [US3] Implement [Service] with SRP in src/services/[service].py
+- [ ] T040 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T041 [US3] Add validation, error handling, and documentation
+- [ ] T042 [US3] Code review and refactoring
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -150,11 +174,18 @@ Examples of foundational tasks (adjust based on your project):
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] TXXX [P] Documentation updates in docs/
-- [ ] TXXX Code cleanup and refactoring
-- [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
-- [ ] TXXX Security hardening
+**Constitution Compliance Checks**:
+
+- [ ] TXXX [P] Verify test coverage ≥80% across all code (run coverage report)
+- [ ] TXXX [P] Run linters/formatters - zero warnings (ESLint/Ruff/etc)
+- [ ] TXXX [P] Check cyclomatic complexity ≤10 per function
+- [ ] TXXX [P] Verify type safety (strict mode compliance)
+- [ ] TXXX [P] Documentation completeness audit (all public APIs documented)
+- [ ] TXXX [P] Dependency audit (license, security, cost review)
+- [ ] TXXX Code cleanup and refactoring (DRY violations, maintainability)
+- [ ] TXXX Performance profiling and optimization (resource efficiency)
+- [ ] TXXX [P] Security hardening and vulnerability scanning
+- [ ] TXXX Cost analysis (API usage, infrastructure, monitoring costs)
 - [ ] TXXX Run quickstart.md validation
 
 ---
