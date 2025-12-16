@@ -1,32 +1,17 @@
 {
     "name": "search_azure_updates",
-    "description": "Search and filter Azure service updates. Returns lightweight results with metadata only (no descriptions). Supports natural language queries with keyword matching and multi-dimensional filtering (tags, categories, products, dates). Use get_azure_update to retrieve full details including descriptions for specific updates.",
+    "description": "Search and filter Azure service updates. Returns lightweight results with metadata only (no descriptions). Supports natural language queries with keyword matching (searches across title, description, tags, categories, and products) and structured filtering (status, availability, dates). Use get_azure_update to retrieve full details including descriptions for specific updates.",
     "inputSchema": {
         "type": "object",
         "properties": {
             "query": {
                 "type": "string",
-                "description": "Natural language search query or keywords to match in title and description. Uses full-text search with BM25 relevance ranking. Leave empty to filter only without keyword search."
+                "description": "Natural language search query or keywords to match across title, description, tags, product categories, and products. Uses full-text search with BM25 relevance ranking. Leave empty to filter only without keyword search."
             },
             "filters": {
                 "type": "object",
                 "description": "Structured filters to narrow down search results. All filters use AND logic.",
                 "properties": {
-                    "tags": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "Filter by update tags (e.g., ['Retirements', 'Security'])"
-                    },
-                    "productCategory": {
-                        "type": "string",
-                        "description": "Filter by Azure product category (e.g., 'Compute', 'AI + Machine Learning')"
-                    },
-                    "product": {
-                        "type": "string",
-                        "description": "Filter by specific Azure product (e.g., 'Azure Virtual Machines')"
-                    },
                     "status": {
                         "type": "string",
                         "description": "Filter by update status (e.g., 'Active', 'Retired')"
@@ -210,13 +195,10 @@
     },
     "examples": [
         {
-            "name": "Search by tags and date",
+            "name": "Search retirements in Compute category",
             "input": {
+                "query": "Retirement Compute",
                 "filters": {
-                    "tags": [
-                        "Retirements"
-                    ],
-                    "productCategory": "Compute",
                     "dateFrom": "2026-01-01"
                 },
                 "sortBy": "retirementDate:asc",
@@ -259,10 +241,8 @@
         {
             "name": "Search retirements by retirement date range",
             "input": {
+                "query": "Retirement",
                 "filters": {
-                    "tags": [
-                        "Retirements"
-                    ],
                     "retirementDateFrom": "2026-01-01",
                     "retirementDateTo": "2026-12-31"
                 },
