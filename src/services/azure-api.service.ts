@@ -230,8 +230,9 @@ function buildQueryUrl(options: FetchOptions, skip: number = 0): string {
     }
 
     // Filter by modified date for differential sync
+    // Use 'ge' (>=) instead of 'gt' (>) to handle multiple updates with same timestamp
     if (options.modifiedSince) {
-        params.set('$filter', `modified gt ${options.modifiedSince}`);
+        params.set('$filter', `modified ge ${options.modifiedSince}`);
     }
 
     // Sort by newest first so initial pages contain recent updates

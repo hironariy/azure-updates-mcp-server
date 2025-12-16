@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Critical Sync Bug**: Changed differential sync filter from `modified gt` to `modified ge` to prevent missing updates published at the same timestamp. Previously, if multiple updates were published at exactly the same time, only the first one would be synced, and others would be permanently missed in subsequent syncs.
+
 ### Planned
 
 - Pre-populated database snapshot for instant startup
