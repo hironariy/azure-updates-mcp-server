@@ -104,6 +104,7 @@ export function searchUpdates(
 
     const { sql, params } = buildSearchQuery(query.query, query.filters, limit, offset);
 
+    // T062: Log query performance metrics
     logger.debug('Executing search query', {
         hasKeywordSearch: !!query.query,
         filters: query.filters,
@@ -111,7 +112,8 @@ export function searchUpdates(
         offset,
     });
 
-    // Execute search
+    // Execute search with timing
+    const queryStartTime = Date.now();
     const stmt = db.prepare(sql);
     const results = stmt.all(...params) as Array<{
         id: string;
@@ -125,11 +127,15 @@ export function searchUpdates(
         relevance?: number;
     }>;
 
+    const queryExecutionTime = Date.now() - queryStartTime;
+
     // Get total count (without limit/offset)
+    const countStartTime = Date.now();
     const { sql: countSql, params: countParams } = buildCountQuery(query.query, query.filters);
     const countStmt = db.prepare(countSql);
     const countResult = countStmt.get(...countParams) as { total: number };
     const totalResults = countResult.total;
+    const countExecutionTime = Date.now() - countStartTime;
 
     // Enrich results with related data
     const enrichedResults: AzureUpdateSearchResult[] = results.map(row => ({
@@ -149,6 +155,16 @@ export function searchUpdates(
     }));
 
     const queryTime = Date.now() - startTime;
+
+    // T062: Log query performance metrics
+    logger.info('Search query completed', {
+        totalTime: queryTime,
+        queryExecutionTime,
+        countExecutionTime,
+        enrichmentTime: queryTime - queryExecutionTime - countExecutionTime,
+        resultCount: results.length,
+        totalResults,
+    });
 
     return createSearchResponse(enrichedResults, totalResults, limit, offset, queryTime);
 }
@@ -308,23 +324,10 @@ function buildFilterClauses(
 
     const clauses: string[] = [];
 
-    // Tags filter (T024)
-    if (filters.tags && filters.tags.length > 0) {
-        clauses.push(buildExistsClause('update_tags', 'ut', 'tag', filters.tags.length));
-        params.push(...filters.tags);
-    }
-
-    // Product categories filter (T025)
-    if (filters.productCategories && filters.productCategories.length > 0) {
-        clauses.push(buildExistsClause('update_categories', 'uc', 'category', filters.productCategories.length));
-        params.push(...filters.productCategories);
-    }
-
-    // Products filter (T026)
-    if (filters.products && filters.products.length > 0) {
-        clauses.push(buildExistsClause('update_products', 'up', 'product', filters.products.length));
-        params.push(...filters.products);
-    }
+    // Array filters (tags, categories, products)
+    addArrayFilterClause(clauses, params, filters.tags, 'update_tags', 'ut', 'tag');
+    addArrayFilterClause(clauses, params, filters.productCategories, 'update_categories', 'uc', 'category');
+    addArrayFilterClause(clauses, params, filters.products, 'update_products', 'up', 'product');
 
     // Status filter
     if (filters.status) {
@@ -353,6 +356,23 @@ function buildFilterClauses(
     }
 
     return clauses;
+}
+
+/**
+ * Helper to add array filter clauses
+ */
+function addArrayFilterClause(
+    clauses: string[],
+    params: unknown[],
+    values: string[] | undefined,
+    tableName: string,
+    tableAlias: string,
+    columnName: string
+): void {
+    if (values && values.length > 0) {
+        clauses.push(buildExistsClause(tableName, tableAlias, columnName, values.length));
+        params.push(...values);
+    }
 }
 
 /**

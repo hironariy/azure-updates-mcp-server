@@ -16,6 +16,13 @@ const __dirname = dirname(__filename);
  * - Automatic schema initialization
  * - Schema versioning for migrations
  * - Performance optimizations (cache size, temp store)
+ * 
+ * Connection Pooling Considerations (T064):
+ * - better-sqlite3 is synchronous and uses a single connection per database instance
+ * - No connection pooling needed for this use case (single-process MCP server)
+ * - WAL mode enables concurrent reads while writes are in progress
+ * - For high-concurrency scenarios, consider migrating to async driver with pooling
+ * - Current design targets <100k records with <10 concurrent MCP clients
  */
 
 export interface DatabaseConfig {
@@ -142,20 +149,8 @@ function applySchema(db: Database.Database): void {
     const schemaPath = join(__dirname, 'schema.sql');
     const schemaSql = readFileSync(schemaPath, 'utf-8');
 
-    // Execute schema in a transaction
-    const applySchemaTransaction = db.transaction(() => {
-        // Split by semicolon and execute each statement
-        const statements = schemaSql
-            .split(';')
-            .map(stmt => stmt.trim())
-            .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
-
-        for (const statement of statements) {
-            db.exec(statement);
-        }
-    });
-
-    applySchemaTransaction();
+    // Execute entire schema at once (SQLite handles multiple statements)
+    db.exec(schemaSql);
 }
 
 /**

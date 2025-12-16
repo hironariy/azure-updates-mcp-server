@@ -1,0 +1,16 @@
+{
+    "servers": {
+        "azure-updates-mcp-server": {
+            "command": "node",
+            "args": [
+                "dist/index.js",
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {},
+        },
+        "microsoft-docs-mcp": {
+            "type": "http",
+            "url": "https://learn.microsoft.com/api/mcp"
+        }
+    }
+}

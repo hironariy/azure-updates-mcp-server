@@ -105,6 +105,7 @@ CREATE INDEX IF NOT EXISTS idx_availabilities_ring_date ON update_availabilities
 -- =============================================================================
 
 -- Full-text search index for title and description content
+-- Note: Title boosting can be achieved in queries using MATCH expressions
 CREATE VIRTUAL TABLE IF NOT EXISTS updates_fts USING fts5(
   id UNINDEXED,  -- Don't index the ID itself (used for joins)
   title,
@@ -121,9 +122,9 @@ CREATE TRIGGER IF NOT EXISTS updates_fts_insert AFTER INSERT ON azure_updates BE
 END;
 
 CREATE TRIGGER IF NOT EXISTS updates_fts_update AFTER UPDATE ON azure_updates BEGIN
-  UPDATE updates_fts 
-  SET title = new.title, description_md = new.description_md
-  WHERE rowid = old.rowid;
+  DELETE FROM updates_fts WHERE rowid = old.rowid;
+  INSERT INTO updates_fts(rowid, id, title, description_md)
+  VALUES (new.rowid, new.id, new.title, new.description_md);
 END;
 
 CREATE TRIGGER IF NOT EXISTS updates_fts_delete AFTER DELETE ON azure_updates BEGIN

@@ -69,8 +69,9 @@ export function debug(message: string, context?: LogContext): void {
 
     const formatted = formatLog('debug', message, context);
     if (currentConfig.enableConsole) {
+        // MCP servers must write logs to stderr to avoid interfering with stdio protocol
         // eslint-disable-next-line no-console
-        console.debug(formatted);
+        console.error(formatted);
     }
 }
 
@@ -82,8 +83,9 @@ export function info(message: string, context?: LogContext): void {
 
     const formatted = formatLog('info', message, context);
     if (currentConfig.enableConsole) {
+        // MCP servers must write logs to stderr to avoid interfering with stdio protocol
         // eslint-disable-next-line no-console
-        console.info(formatted);
+        console.error(formatted);
     }
 }
 
@@ -95,8 +97,9 @@ export function warn(message: string, context?: LogContext): void {
 
     const formatted = formatLog('warn', message, context);
     if (currentConfig.enableConsole) {
+        // MCP servers must write logs to stderr to avoid interfering with stdio protocol
         // eslint-disable-next-line no-console
-        console.warn(formatted);
+        console.error(formatted);
     }
 }
 

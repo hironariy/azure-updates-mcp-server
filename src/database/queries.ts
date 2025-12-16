@@ -138,6 +138,25 @@ export function upsertUpdate(
 }
 
 /**
+ * Upsert an Azure update record only if modified timestamp is newer
+ * This is the recommended function for sync operations
+ */
+export function upsertUpdateIfNewer(
+    db: Database.Database,
+    update: AzureUpdateRecord
+): boolean {
+    // Check if existing entry has same or newer modified timestamp
+    const existing = getUpdateById(db, update.id);
+
+    if (existing && new Date(existing.modified) >= new Date(update.modified)) {
+        return false; // Skip update
+    }
+
+    upsertUpdate(db, update);
+    return true; // Updated or inserted
+}
+
+/**
  * Get an Azure update by ID
  */
 export function getUpdateById(db: Database.Database, id: string): AzureUpdate | null {
@@ -379,4 +398,25 @@ export function getUpdateCount(db: Database.Database): number {
     const stmt = db.prepare('SELECT COUNT(*) as count FROM azure_updates');
     const result = stmt.get() as { count: number };
     return result.count;
+}
+/**
+ * Delete updates older than the specified retention start date
+ * 
+ * Removes updates where both modified and created timestamps are before the retention start date.
+ * This cascades to related tables (tags, categories, products, availabilities) via foreign key constraints.
+ * 
+ * @param db Database instance
+ * @param retentionStartDate ISO 8601 date string (e.g., '2022-01-01')
+ * @returns Number of records deleted
+ */
+export function deleteUpdatesBeforeRetentionDate(db: Database.Database, retentionStartDate: string): number {
+    const cutoffDateTime = retentionStartDate + 'T00:00:00.000Z';
+
+    const stmt = db.prepare(`
+    DELETE FROM azure_updates 
+    WHERE MAX(modified, created) < ?
+  `);
+
+    const result = stmt.run(cutoffDateTime);
+    return result.changes;
 }

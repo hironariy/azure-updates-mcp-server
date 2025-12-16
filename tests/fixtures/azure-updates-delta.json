@@ -1,0 +1,145 @@
+{
+    "@odata.context": "https://relcomms-prod-dagnegedescbeefs.b02.azurefd.net/api/v2/$metadata#Azure",
+    "@odata.count": 5,
+    "value": [
+        {
+            "id": "515484",
+            "productCategories": [
+                "Compute"
+            ],
+            "tags": [
+                "Retirements"
+            ],
+            "products": [
+                "Batch"
+            ],
+            "generalAvailabilityDate": null,
+            "previewAvailabilityDate": null,
+            "privatePreviewAvailabilityDate": null,
+            "title": "Updated: The retirement date for default outbound access has been extended to September 30, 2026.",
+            "description": "<div>This is an updated version of the announcement. The retirement date has been further extended to September 30, 2026.</div>",
+            "status": null,
+            "created": "2025-12-12T11:30:27.0841562Z",
+            "modified": "2025-12-16T10:00:00.0000000Z",
+            "locale": null,
+            "availabilities": [
+                {
+                    "ring": "Retirement",
+                    "year": 2026,
+                    "month": "September"
+                }
+            ]
+        },
+        {
+            "id": "536907",
+            "productCategories": [
+                "AI + machine learning",
+                "Analytics"
+            ],
+            "tags": [],
+            "products": [
+                "Azure Databricks"
+            ],
+            "generalAvailabilityDate": null,
+            "previewAvailabilityDate": "2025-12",
+            "privatePreviewAvailabilityDate": null,
+            "title": "Updated: Azure Databricks Dashboard subscriptions now support Microsoft Teams and Slack",
+            "description": "<div>Dashboard subscriptions have been expanded to include Slack support in addition to Microsoft Teams.</div>",
+            "status": "In preview",
+            "created": "2025-12-11T20:30:24.5013232Z",
+            "modified": "2025-12-16T09:30:00.0000000Z",
+            "locale": null,
+            "availabilities": [
+                {
+                    "ring": "Preview",
+                    "year": 2025,
+                    "month": "December"
+                }
+            ]
+        },
+        {
+            "id": "999001",
+            "productCategories": [
+                "Databases"
+            ],
+            "tags": [
+                "Features"
+            ],
+            "products": [
+                "Azure SQL Database"
+            ],
+            "generalAvailabilityDate": "2026-01",
+            "previewAvailabilityDate": null,
+            "privatePreviewAvailabilityDate": null,
+            "title": "Generally Available: Azure SQL Database Hyperscale Tier Enhancements",
+            "description": "<div>Azure SQL Database Hyperscale tier now offers enhanced performance with up to 100 TB database size support and improved read scale-out capabilities.</div>",
+            "status": "Launched",
+            "created": "2025-12-16T08:00:00.0000000Z",
+            "modified": "2025-12-16T08:00:00.0000000Z",
+            "locale": null,
+            "availabilities": [
+                {
+                    "ring": "General Availability",
+                    "year": 2026,
+                    "month": "January"
+                }
+            ]
+        },
+        {
+            "id": "999002",
+            "productCategories": [
+                "Containers"
+            ],
+            "tags": [
+                "Features"
+            ],
+            "products": [
+                "Azure Kubernetes Service"
+            ],
+            "generalAvailabilityDate": null,
+            "previewAvailabilityDate": "2025-12",
+            "privatePreviewAvailabilityDate": null,
+            "title": "Public Preview: AKS Node Auto-Repair with AI-Powered Diagnostics",
+            "description": "<div>AKS introduces AI-powered node diagnostics that automatically detect and repair common node issues, reducing manual intervention and improving cluster reliability.</div>",
+            "status": "In preview",
+            "created": "2025-12-16T07:30:00.0000000Z",
+            "modified": "2025-12-16T07:30:00.0000000Z",
+            "locale": null,
+            "availabilities": [
+                {
+                    "ring": "Preview",
+                    "year": 2025,
+                    "month": "December"
+                }
+            ]
+        },
+        {
+            "id": "999003",
+            "productCategories": [
+                "Networking"
+            ],
+            "tags": [
+                "Features"
+            ],
+            "products": [
+                "Azure Virtual Network"
+            ],
+            "generalAvailabilityDate": "2026-02",
+            "previewAvailabilityDate": null,
+            "privatePreviewAvailabilityDate": null,
+            "title": "Generally Available: Azure Virtual Network Flow Logs V3",
+            "description": "<div>Flow Logs V3 provides enhanced network traffic visibility with real-time analytics, improved filtering capabilities, and seamless integration with Azure Monitor.</div>",
+            "status": "Launched",
+            "created": "2025-12-16T06:45:00.0000000Z",
+            "modified": "2025-12-16T06:45:00.0000000Z",
+            "locale": null,
+            "availabilities": [
+                {
+                    "ring": "General Availability",
+                    "year": 2026,
+                    "month": "February"
+                }
+            ]
+        }
+    ]
+}

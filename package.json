@@ -5,17 +5,22 @@
     "type": "module",
     "main": "dist/index.js",
     "bin": {
-        "azure-updates-mcp": "dist/index.js"
+        "azure-updates-mcp-server": "dist/index.js"
     },
     "engines": {
         "node": ">=18.0.0"
     },
     "scripts": {
-        "build": "tsc",
+        "build": "tsc && node scripts/copy-schema.mjs",
+        "start": "node dist/index.js",
         "dev": "tsx src/index.ts",
-        "test": "vitest run",
-        "test:watch": "vitest",
-        "test:coverage": "vitest run --coverage",
+        "dev:mock": "tsx tests/mock-api/server.ts",
+        "test": "NODE_OPTIONS='--no-warnings --disable-warning=DEP0169' vitest run",
+        "test:watch": "NODE_OPTIONS='--no-warnings --disable-warning=DEP0169' vitest",
+        "test:coverage": "NODE_OPTIONS='--no-warnings --disable-warning=DEP0169' vitest run --coverage",
+        "test:integration": "vitest run tests/integration",
+        "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts",
+        "inspect:build": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix"
     },

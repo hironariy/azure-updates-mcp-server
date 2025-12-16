@@ -15,6 +15,7 @@ import type Database from 'better-sqlite3';
 
 import * as logger from './utils/logger.js';
 import { handleSearchAzureUpdates } from './tools/search-azure-updates.tool.js';
+import { getGuideResourceResponse } from './resources/guide.resource.js';
 
 /**
  * MCP Server configuration
@@ -157,8 +158,10 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
 
 /**
  * Register resource handlers
+ * 
+ * T068: Register azure-updates://guide resource with MCP SDK
  */
-function registerResourceHandlers(server: Server, _db: Database.Database): void {
+function registerResourceHandlers(server: Server, db: Database.Database): void {
     // List available resources
     server.setRequestHandler(ListResourcesRequestSchema, () => {
         logger.debug('ListResources request received');
@@ -184,19 +187,7 @@ function registerResourceHandlers(server: Server, _db: Database.Database): void 
         });
 
         if (request.params.uri === 'azure-updates://guide') {
-            // Resource implementation will be imported from resources/guide.resource.ts
-            // For now, return a placeholder
-            return {
-                contents: [
-                    {
-                        uri: request.params.uri,
-                        mimeType: 'application/json',
-                        text: JSON.stringify({
-                            message: 'Resource implementation pending - will be completed in Phase 8 (User Story 6)',
-                        }),
-                    },
-                ],
-            };
+            return getGuideResourceResponse(db);
         }
 
         throw new Error(`Unknown resource: ${request.params.uri}`);

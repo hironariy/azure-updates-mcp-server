@@ -86,13 +86,13 @@
 
 ### Implementation for User Story 2 ✅
 
-- [ ] T031 [P] [US2] Add status filter support in src/services/search.service.ts
-- [ ] T032 [P] [US2] Add availability ring filter support in src/services/search.service.ts with join to update_availabilities table
-- [ ] T033 [US2] Add date range filtering (dateFrom/dateTo) in src/services/search.service.ts for modified and availability dates
-- [ ] T034 [US2] Implement filter combination with AND logic in src/services/search.service.ts
-- [ ] T035 [US2] Add filter validation in src/tools/search-azure-updates.tool.ts to ensure valid values
-- [ ] T036 [US2] Update search_azure_updates tool handler to support all filter parameters
-- [ ] T037 [US2] Add filter examples in src/tools/search-azure-updates.tool.ts JSDoc comments
+- [X] T031 [P] [US2] Add status filter support in src/services/search.service.ts
+- [X] T032 [P] [US2] Add availability ring filter support in src/services/search.service.ts with join to update_availabilities table
+- [X] T033 [US2] Add date range filtering (dateFrom/dateTo) in src/services/search.service.ts for modified and availability dates
+- [X] T034 [US2] Implement filter combination with AND logic in src/services/search.service.ts
+- [X] T035 [US2] Add filter validation in src/tools/search-azure-updates.tool.ts to ensure valid values
+- [X] T036 [US2] Update search_azure_updates tool handler to support all filter parameters
+- [X] T037 [US2] Add filter examples in src/tools/search-azure-updates.tool.ts JSDoc comments
 
 **Checkpoint**: At this point, User Stories 1 AND 2 work - comprehensive filtering without OData syntax
 
@@ -106,13 +106,13 @@
 
 ### Implementation for User Story 3 ✅
 
-- [ ] T038 [US3] Enhance FTS5 query to include both title and description_md columns in src/services/search.service.ts
-- [ ] T039 [US3] Implement BM25 relevance scoring with title boosting in src/services/search.service.ts
-- [ ] T040 [US3] Add relevance score to response objects in src/services/search.service.ts
-- [ ] T041 [US3] Implement case-insensitive multi-word keyword matching in src/services/search.service.ts
-- [ ] T042 [US3] Add pagination support (limit and offset parameters) in src/services/search.service.ts
-- [ ] T043 [US3] Update search_azure_updates tool to return relevance scores in response
-- [ ] T044 [US3] Add hasMore pagination indicator in tool response
+- [X] T038 [US3] Enhance FTS5 query to include both title and description_md columns in src/services/search.service.ts
+- [X] T039 [US3] Implement BM25 relevance scoring with title boosting in src/services/search.service.ts
+- [X] T040 [US3] Add relevance score to response objects in src/services/search.service.ts
+- [X] T041 [US3] Implement case-insensitive multi-word keyword matching in src/services/search.service.ts
+- [X] T042 [US3] Add pagination support (limit and offset parameters) in src/services/search.service.ts
+- [X] T043 [US3] Update search_azure_updates tool to return relevance scores in response
+- [X] T044 [US3] Add hasMore pagination indicator in tool response
 
 **Checkpoint**: All search and filter capabilities complete - keyword search with relevance ranking works
 
@@ -126,20 +126,20 @@
 
 ### Implementation for User Story 4 ✅
 
-- [ ] T045 [P] [US4] Implement Azure Updates API HTTP client in src/services/azure-api.service.ts with fetch and error handling
-- [ ] T046 [P] [US4] Implement checkpoint read/write methods in src/database/queries.ts for sync_checkpoints table
-- [ ] T047 [US4] Implement full sync logic in src/services/sync.service.ts for initial data load
-- [ ] T048 [US4] Implement differential sync with modified timestamp filtering in src/services/sync.service.ts
-- [ ] T049 [US4] Implement UPSERT operations for azure_updates table in src/database/queries.ts
-- [ ] T050 [US4] Implement batch insert for tags, categories, products, availabilities in src/database/queries.ts
-- [ ] T051 [US4] Add transaction wrapping for sync operations in src/services/sync.service.ts
-- [ ] T052 [US4] Implement retry logic with exponential backoff for API calls in src/services/azure-api.service.ts
-- [ ] T053 [US4] Add HTML-to-Markdown conversion during sync in src/services/sync.service.ts
-- [ ] T054 [US4] Implement checkpoint update after successful sync in src/services/sync.service.ts
-- [ ] T055 [US4] Add error handling and checkpoint rollback on sync failure in src/services/sync.service.ts
-- [ ] T056 [US4] Implement startup sync trigger in src/index.ts with staleness check (default 24h threshold)
-- [ ] T057 [US4] Make startup sync non-blocking with immediate MCP tool availability in src/index.ts
-- [ ] T058 [US4] Add structured logging for all sync operations (start, progress, completion, errors)
+- [X] T045 [P] [US4] Implement Azure Updates API HTTP client in src/services/azure-api.service.ts with fetch and error handling
+- [X] T046 [P] [US4] Implement checkpoint read/write methods in src/database/queries.ts for sync_checkpoints table
+- [X] T047 [US4] Implement full sync logic in src/services/sync.service.ts for initial data load
+- [X] T048 [US4] Implement differential sync with modified timestamp filtering in src/services/sync.service.ts
+- [X] T049 [US4] Implement UPSERT operations for azure_updates table in src/database/queries.ts
+- [X] T050 [US4] Implement batch insert for tags, categories, products, availabilities in src/database/queries.ts
+- [X] T051 [US4] Add transaction wrapping for sync operations in src/services/sync.service.ts
+- [X] T052 [US4] Implement retry logic with exponential backoff for API calls in src/services/azure-api.service.ts
+- [X] T053 [US4] Add HTML-to-Markdown conversion during sync in src/services/sync.service.ts
+- [X] T054 [US4] Implement checkpoint update after successful sync in src/services/sync.service.ts
+- [X] T055 [US4] Add error handling and checkpoint rollback on sync failure in src/services/sync.service.ts
+- [X] T056 [US4] Implement startup sync trigger in src/index.ts with staleness check (default 24h threshold)
+- [X] T057 [US4] Make startup sync non-blocking with immediate MCP tool availability in src/index.ts
+- [X] T058 [US4] Add structured logging for all sync operations (start, progress, completion, errors)
 
 **Checkpoint**: Automatic sync complete - data stays fresh without manual intervention
 
@@ -153,12 +153,12 @@
 
 ### Implementation for User Story 5 ✅
 
-- [ ] T059 [P] [US5] Enable SQLite performance optimizations (WAL mode, cache size, temp store) in src/database/database.ts
-- [ ] T060 [P] [US5] Add database indices for all filter columns per data-model.md in src/database/schema.sql
-- [ ] T061 [US5] Implement prepared statement caching in src/database/queries.ts
-- [ ] T062 [US5] Add query performance logging with timing metrics in src/services/search.service.ts
-- [ ] T063 [US5] Optimize FTS5 queries with covering indices in src/database/schema.sql
-- [ ] T064 [US5] Add connection pooling considerations (better-sqlite3 is synchronous, document limitations) in src/database/database.ts
+- [X] T059 [P] [US5] Enable SQLite performance optimizations (WAL mode, cache size, temp store) in src/database/database.ts
+- [X] T060 [P] [US5] Add database indices for all filter columns per data-model.md in src/database/schema.sql
+- [X] T061 [US5] Implement prepared statement caching in src/database/queries.ts
+- [X] T062 [US5] Add query performance logging with timing metrics in src/services/search.service.ts
+- [X] T063 [US5] Optimize FTS5 queries with covering indices in src/database/schema.sql
+- [X] T064 [US5] Add connection pooling considerations (better-sqlite3 is synchronous, document limitations) in src/database/database.ts
 
 **Checkpoint**: Performance optimization complete - queries respond in <500ms
 
@@ -172,13 +172,13 @@
 
 ### Implementation for User Story 6 ✅
 
-- [ ] T065 [P] [US6] Implement metadata extraction queries (distinct tags, categories, products) in src/database/queries.ts
-- [ ] T066 [P] [US6] Implement guide resource handler in src/resources/guide.resource.ts
-- [ ] T067 [US6] Calculate data freshness (hours since last sync) in src/resources/guide.resource.ts
-- [ ] T068 [US6] Register azure-updates://guide resource with MCP SDK in src/server.ts
-- [ ] T069 [US6] Add get-by-ID functionality to search_azure_updates tool in src/tools/search-azure-updates.tool.ts
-- [ ] T070 [US6] Format dates in human-readable format in response objects
-- [ ] T071 [US6] Handle null/missing fields gracefully in response formatting
+- [X] T065 [P] [US6] Implement metadata extraction queries (distinct tags, categories, products) in src/database/queries.ts
+- [X] T066 [P] [US6] Implement guide resource handler in src/resources/guide.resource.ts
+- [X] T067 [US6] Calculate data freshness (hours since last sync) in src/resources/guide.resource.ts
+- [X] T068 [US6] Register azure-updates://guide resource with MCP SDK in src/server.ts
+- [X] T069 [US6] Add get-by-ID functionality to search_azure_updates tool in src/tools/search-azure-updates.tool.ts
+- [X] T070 [US6] Format dates in human-readable format in response objects
+- [X] T071 [US6] Handle null/missing fields gracefully in response formatting
 
 **Checkpoint**: Rich metadata exposure complete - LLMs have full context for query construction
 
@@ -203,14 +203,14 @@
 
 **Purpose**: Environment configuration and user documentation
 
-- [ ] T078 [P] Create .env.example with all configuration variables (DATABASE_PATH, SYNC_STALENESS_HOURS, LOG_LEVEL, etc.)
-- [ ] T079 [P] Implement environment variable loading in src/index.ts with defaults
-- [ ] T080 [P] Add configuration validation at startup in src/index.ts
-- [ ] T081 [P] Create README.md with installation, configuration, and usage instructions
-- [ ] T082 [P] Document MCP client setup for Claude Desktop, Continue.dev, Cline in README.md
-- [ ] T083 [P] Add JSDoc comments to all public APIs and exported functions
-- [ ] T084 Create CHANGELOG.md with version history
-- [ ] T085 [P] Add LICENSE file (MIT recommended)
+- [X] T078 [P] Create .env.example with all configuration variables (DATABASE_PATH, SYNC_STALENESS_HOURS, LOG_LEVEL, etc.)
+- [X] T079 [P] Implement environment variable loading in src/index.ts with defaults
+- [X] T080 [P] Add configuration validation at startup in src/index.ts
+- [X] T081 [P] Create README.md with installation, configuration, and usage instructions
+- [X] T082 [P] Document MCP client setup for Claude Desktop, Continue.dev, Cline in README.md
+- [X] T083 [P] Add JSDoc comments to all public APIs and exported functions
+- [X] T084 Create CHANGELOG.md with version history
+- [X] T085 [P] Add LICENSE file (MIT recommended)
 
 **Checkpoint**: Documentation complete - users can install and configure the server
 
@@ -222,15 +222,15 @@
 
 **Constitution Compliance Checks**:
 
-- [ ] T086 [P] Run ESLint and fix all warnings/errors
-- [ ] T087 [P] Verify TypeScript strict mode compliance (no any types, proper null checks)
-- [ ] T088 [P] Review cyclomatic complexity - ensure ≤10 per function
-- [ ] T089 [P] Audit all dependencies for licenses and security vulnerabilities
-- [ ] T090 [P] Review logging for cost efficiency (structured JSON, appropriate levels)
-- [ ] T091 Code cleanup - remove console.log statements, unused imports, commented code
+- [X] T086 [P] Run ESLint and fix all warnings/errors
+- [X] T087 [P] Verify TypeScript strict mode compliance (no any types, proper null checks)
+- [X] T088 [P] Review cyclomatic complexity - ensure ≤10 per function
+- [X] T089 [P] Audit all dependencies for licenses and security vulnerabilities
+- [X] T090 [P] Review logging for cost efficiency (structured JSON, appropriate levels)
+- [X] T091 Code cleanup - remove console.log statements, unused imports, commented code
 - [ ] T092 Performance profiling - verify query performance targets (<500ms p95)
-- [ ] T093 Security review - input validation, SQL injection prevention, error message sanitization
-- [ ] T094 [P] Add package.json bin configuration for npx execution
+- [X] T093 Security review - input validation, SQL injection prevention, error message sanitization
+- [X] T094 [P] Add package.json bin configuration for npx execution
 - [ ] T095 Test quickstart.md instructions end-to-end with fresh installation
 
 ---

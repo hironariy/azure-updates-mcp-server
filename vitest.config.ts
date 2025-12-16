@@ -4,6 +4,9 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'node',
+        silent: true,
+        reporters: process.env.CI ? ['verbose'] : ['default'],
+        logHeapUsage: false,
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],

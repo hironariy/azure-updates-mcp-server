@@ -5,7 +5,6 @@
         "speckit.plan": true,
         "speckit.tasks": true,
         "speckit.implement": true,
-        "review-code": true
     },
     "chat.tools.terminal.autoApprove": {
         ".specify/scripts/bash/": true,

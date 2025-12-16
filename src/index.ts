@@ -13,11 +13,16 @@ import { homedir } from 'os';
 
 import { initializeDatabase, closeDatabase } from './database/database.js';
 import { createMCPServer } from './server.js';
+import { performSync, isSyncNeeded } from './services/sync.service.js';
+import { deleteUpdatesBeforeRetentionDate } from './database/queries.js';
 import * as logger from './utils/logger.js';
 
 // Configuration from environment variables
 const DATABASE_PATH = process.env.DATABASE_PATH ?? join(homedir(), '.azure-updates-mcp', 'azure-updates.db');
 const LOG_LEVEL = (process.env.LOG_LEVEL ?? 'info') as 'debug' | 'info' | 'warn' | 'error';
+const SYNC_STALENESS_HOURS = parseInt(process.env.SYNC_STALENESS_HOURS ?? '24', 10);
+const SYNC_ON_STARTUP = (process.env.SYNC_ON_STARTUP ?? 'true').toLowerCase() === 'true';
+const DATA_RETENTION_START_DATE = process.env.DATA_RETENTION_START_DATE ?? '2022-01-01';
 const SERVER_NAME = 'azure-updates-mcp-server';
 const SERVER_VERSION = '1.0.0';
 
@@ -47,6 +52,52 @@ async function main(): Promise<void> {
         });
 
         logger.info('Database initialized successfully');
+
+        // Cleanup old data based on retention start date
+        if (DATA_RETENTION_START_DATE) {
+            logger.info('Cleaning up old records', { retentionStartDate: DATA_RETENTION_START_DATE });
+            const deletedCount = deleteUpdatesBeforeRetentionDate(db, DATA_RETENTION_START_DATE);
+            if (deletedCount > 0) {
+                logger.info('Deleted old records', {
+                    deletedCount,
+                    retentionStartDate: DATA_RETENTION_START_DATE,
+                });
+            }
+        }
+
+        // T056: Check if sync is needed based on staleness
+        if (SYNC_ON_STARTUP && isSyncNeeded(db, SYNC_STALENESS_HOURS)) {
+            logger.info('Data is stale, starting background sync', {
+                stalenessThreshold: `${SYNC_STALENESS_HOURS} hours`,
+                dataRetentionStartDate: DATA_RETENTION_START_DATE,
+            });
+
+            // T057: Non-blocking background sync - don't await
+            void performSync(db, DATA_RETENTION_START_DATE)
+                .then(result => {
+                    if (result.success) {
+                        logger.info('Background sync completed', {
+                            recordsProcessed: result.recordsProcessed,
+                            recordsInserted: result.recordsInserted,
+                            recordsUpdated: result.recordsUpdated,
+                            durationMs: result.durationMs,
+                        });
+                    } else {
+                        logger.warn('Background sync failed', {
+                            error: result.error,
+                            durationMs: result.durationMs,
+                        });
+                    }
+                })
+                .catch(error => {
+                    logger.errorWithStack('Background sync error', error as Error);
+                });
+        } else {
+            logger.info('Data is fresh, skipping startup sync', {
+                syncOnStartup: SYNC_ON_STARTUP,
+                stalenessThreshold: `${SYNC_STALENESS_HOURS} hours`,
+            });
+        }
 
         // Create MCP server
         const server = createMCPServer({

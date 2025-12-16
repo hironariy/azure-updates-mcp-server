@@ -3,6 +3,62 @@
  * 
  * Unified tool for searching, filtering, and retrieving Azure updates.
  * Supports natural language queries, structured filters, and get-by-ID operations.
+ * 
+ * @example Natural language search with filters
+ * ```json
+ * {
+ *   "query": "OAuth authentication security",
+ *   "filters": {
+ *     "tags": ["Security"],
+ *     "dateFrom": "2025-01-01"
+ *   },
+ *   "limit": 10
+ * }
+ * ```
+ * 
+ * @example Filter-only search (no keyword)
+ * ```json
+ * {
+ *   "filters": {
+ *     "tags": ["Retirements"],
+ *     "productCategories": ["Compute"],
+ *     "availabilityRing": "Retirement",
+ *     "dateFrom": "2026-01-01",
+ *     "dateTo": "2026-03-31"
+ *   }
+ * }
+ * ```
+ * 
+ * @example Keyword-only search
+ * ```json
+ * {
+ *   "query": "machine learning preview features",
+ *   "limit": 20
+ * }
+ * ```
+ * 
+ * @example Get update by ID
+ * ```json
+ * {
+ *   "id": "AZ-123e4567-e89b-12d3-a456-426614174000"
+ * }
+ * ```
+ * 
+ * @example Complex multi-filter search
+ * ```json
+ * {
+ *   "query": "database performance",
+ *   "filters": {
+ *     "productCategories": ["Databases"],
+ *     "products": ["Azure SQL Database", "Cosmos DB"],
+ *     "status": "Active",
+ *     "availabilityRing": "General Availability",
+ *     "dateFrom": "2025-01-01"
+ *   },
+ *   "limit": 50,
+ *   "offset": 0
+ * }
+ * ```
  */
 
 import type Database from 'better-sqlite3';
@@ -227,17 +283,18 @@ function validateInput(args: unknown): ValidationResult {
  * @returns SearchFilters object
  */
 function buildSearchFilters(inputFilters: ToolInput['filters']): SearchFilters {
-    const filters: SearchFilters = {};
+    if (!inputFilters) return {};
 
-    if (inputFilters?.tags) filters.tags = inputFilters.tags;
-    if (inputFilters?.productCategories) filters.productCategories = inputFilters.productCategories;
-    if (inputFilters?.products) filters.products = inputFilters.products;
-    if (inputFilters?.status) filters.status = inputFilters.status;
-    if (inputFilters?.availabilityRing) filters.availabilityRing = inputFilters.availabilityRing;
-    if (inputFilters?.dateFrom) filters.dateFrom = inputFilters.dateFrom;
-    if (inputFilters?.dateTo) filters.dateTo = inputFilters.dateTo;
-
-    return filters;
+    // Use object spread to simplify and reduce complexity
+    return {
+        ...(inputFilters.tags && { tags: inputFilters.tags }),
+        ...(inputFilters.productCategories && { productCategories: inputFilters.productCategories }),
+        ...(inputFilters.products && { products: inputFilters.products }),
+        ...(inputFilters.status && { status: inputFilters.status }),
+        ...(inputFilters.availabilityRing && { availabilityRing: inputFilters.availabilityRing }),
+        ...(inputFilters.dateFrom && { dateFrom: inputFilters.dateFrom }),
+        ...(inputFilters.dateTo && { dateTo: inputFilters.dateTo }),
+    };
 }
 
 /**
