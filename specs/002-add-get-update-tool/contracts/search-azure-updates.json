@@ -19,19 +19,13 @@
                         },
                         "description": "Filter by update tags (e.g., ['Retirements', 'Security'])"
                     },
-                    "productCategories": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "Filter by Azure product categories (e.g., ['Compute', 'AI + Machine Learning'])"
+                    "productCategory": {
+                        "type": "string",
+                        "description": "Filter by Azure product category (e.g., 'Compute', 'AI + Machine Learning')"
                     },
-                    "products": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "Filter by specific Azure products (e.g., ['Azure Virtual Machines'])"
+                    "product": {
+                        "type": "string",
+                        "description": "Filter by specific Azure product (e.g., 'Azure Virtual Machines')"
                     },
                     "status": {
                         "type": "string",
@@ -76,7 +70,7 @@
                     "retirementDate:asc",
                     "retirementDate:desc"
                 ],
-                "description": "Sort order for results with direction suffix (:asc or :desc). 'relevance' (default for keyword queries, uses BM25 score, always descending), 'modified:desc' (most recently modified first), 'modified:asc' (oldest modified first), 'created:desc' (most recently created first), 'created:asc' (oldest created first), 'retirementDate:asc' (earliest retirement date first), 'retirementDate:desc' (latest retirement date first, only includes updates with Retirement ring). If not specified, defaults to 'relevance' for keyword searches and 'modified:desc' for filter-only searches."
+                "description": "Sort order for results with direction suffix (:asc or :desc)"
             },
             "limit": {
                 "type": "number",
@@ -222,9 +216,7 @@
                     "tags": [
                         "Retirements"
                     ],
-                    "productCategories": [
-                        "Compute"
-                    ],
+                    "productCategory": "Compute",
                     "dateFrom": "2026-01-01"
                 },
                 "sortBy": "retirementDate:asc",
