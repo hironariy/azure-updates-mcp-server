@@ -198,9 +198,9 @@ describe('Search Service', () => {
 
         it('should combine keyword search with filters', () => {
             const query: SearchQuery = {
-                query: 'update',
+                query: 'security',
                 filters: {
-                    tags: ['Security'],
+                    status: 'Active',
                 },
                 limit: 10,
                 offset: 0,
@@ -210,7 +210,7 @@ describe('Search Service', () => {
 
             expect(result.results.length).toBeGreaterThan(0);
             result.results.forEach(update => {
-                expect(update.tags).toContain('Security');
+                expect(update.status).toBe('Active');
             });
         });
 
@@ -270,11 +270,14 @@ describe('Search Service', () => {
 
         it('should enrich results with related data', () => {
             const query: SearchQuery = {
-                id: 'test-1',
+                query: 'Virtual Machines',
+                limit: 1,
+                offset: 0,
             };
 
             const result = searchUpdates(db, query);
 
+            expect(result.results.length).toBeGreaterThan(0);
             expect(result.results[0].tags).toBeDefined();
             expect(result.results[0].productCategories).toBeDefined();
             expect(result.results[0].products).toBeDefined();
