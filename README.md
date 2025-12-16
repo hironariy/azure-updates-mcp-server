@@ -1,20 +1,20 @@
 # Azure Updates MCP Server
 
-> **Natural language search for Azure service updates without OData syntax**
-
-An MCP (Model Context Protocol) server that provides AI assistants with seamless access to Azure service updates, retirements, and feature announcements. Search across 9,000+ updates using natural language queries—no OData syntax required.
+An MCP (Model Context Protocol) server that provides AI assistants with seamless access to Azure service updates, retirements, and feature announcements.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
+> Japanese version: [README.ja.md](./README.ja.md)
+
 ## Features
 
-🔍 **Keyword Matching** - Full-text search across titles and descriptions with BM25 relevance ranking  
-🎯 **Simplified Filtering** - Filter by tags, categories, products, dates, and status—no OData knowledge needed  
-⚡ **Fast Response** - Local SQLite replication ensures <500ms query response times  
-🔄 **Automatic Sync** - Differential synchronization keeps data fresh (configurable interval, default 24h)  
-📊 **Help Resource** - Expose all available filters and data freshness to help AI construct queries  
+🔍 **Better Keyword Matching** - Full-text search (FTS5) across titles and descriptions with BM25 relevance ranking, offering improved query search than the original API.
+🎯 **Simplified Filtering** - Filter by tags, categories, products, dates, and status—no OData knowledge needed.
+⚡ **Fast Response** - Local SQLite replication ensures <500ms query response times.
+🔄 **Automatic Sync** - Differential synchronization keeps data fresh (configurable interval, default 24h).
+📊 **Help Resource** - Expose all available filters and data freshness to help AI construct queries.
 
 ## Setup
 
