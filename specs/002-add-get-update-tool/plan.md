@@ -25,9 +25,11 @@ Add a new `get_azure_update` tool for retrieving full update details by ID and s
 **Scale/Scope**: 
 - Single new tool handler (~100 LOC)
 - Modify existing tool handler (~50 LOC changes)
+- Modify guide resource (~40 LOC changes: update examples, tips, overview)
 - Modify server registration (~20 LOC)
 - Add unit tests (~200 LOC)
 - Update integration tests (~100 LOC)
+- Update resource tests (~30 LOC)
 
 ## Constitution Check
 
@@ -75,6 +77,8 @@ src/
 ├── tools/
 │   ├── get-azure-update.tool.ts # NEW: Handler for get_azure_update tool
 │   └── search-azure-updates.tool.ts # MODIFIED: Remove id handling, remove description from response
+├── resources/
+│   └── guide.resource.ts        # MODIFIED: Update examples and tips for two-tool pattern
 ├── server.ts                    # MODIFIED: Register new tool, update search tool schema
 └── database/
     └── queries.ts               # UNMODIFIED: Existing getUpdateById() already suitable

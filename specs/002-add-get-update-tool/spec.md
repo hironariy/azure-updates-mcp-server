@@ -72,6 +72,7 @@ An AI assistant needs to find Azure retirements happening within a specific date
 - **FR-007**: `search_azure_updates` query parameter MUST search across title, description, tags, productCategories, and products fields.
 - **FR-008**: `search_azure_updates` MUST support sorting by relevance, modified date, created date, and retirement date with explicit direction (asc/desc).
 - **FR-009**: `search_azure_updates` filters MUST include only essential metadata: status, availabilityRing, date ranges (modified and retirement).
+- **FR-010**: `resource:guide` MUST be updated to reflect the two-tool pattern, including updated examples and query tips.
 
 ### Key Entities
 
