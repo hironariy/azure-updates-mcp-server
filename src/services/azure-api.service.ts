@@ -248,6 +248,21 @@ function buildQueryUrl(options: FetchOptions, skip: number = 0): string {
  * @param timeoutMs Timeout in milliseconds
  * @returns Fetch response
  */
+/**
+ * Get package version from package.json
+ */
+function getPackageVersion(): string {
+    try {
+        // Note: In production, version should be read from package.json or injected during build
+        return process.env.npm_package_version || '1.2.0';
+    } catch {
+        return '1.0.0';
+    }
+}
+
+/**
+ * Fetch with timeout and proper headers
+ */
 async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Response> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -257,7 +272,8 @@ async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Respons
             signal: controller.signal,
             headers: {
                 'Accept': 'application/json',
-                'User-Agent': 'azure-updates-mcp-server/1.0',
+                // User-Agent with version and project URL for identification and support
+                'User-Agent': `azure-updates-mcp-server/${getPackageVersion()} (https://github.com/juyamagu/azure-updates-mcp-server)`,
             },
         });
 

@@ -13,6 +13,20 @@ AI アシスタントが Azure サービスの更新情報、廃止予定、機�
 - ⚡ **高速レスポンス** - ローカル SQLite レプリケーションにより 500ms 未満のクエリレスポンスタイム
 - 🔄 **自動同期** - 差分同期でデータを最新に保つ(設定可能な間隔、デフォルト 24 時間)
 - 📊 **ヘルプリソース** - AI がクエリを構築するために利用可能なすべてのフィルタとデータの鮮度を公開
+## 法的通知
+
+⚠️ **重要**: このサーバーは Azure Updates API にアクセスします。この API は [Microsoft APIs 利用規約](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use) の対象となります。本ソフトウェアを使用することにより、以下に同意したものとみなされます:
+
+- すべての適用される Microsoft API の利用規約および条件の遵守
+- データを広告またはマーケティング目的で使用しないこと
+- 適切なデータ保護措置の実装
+- Microsoft の知的財産権の尊重
+
+本ソフトウェアは、コード実装に対してのみ MIT ライセンスの下で提供されます。Azure Updates API を通じてアクセスされるデータは、Microsoft の利用規約の対象となります。
+
+**関連資料:**
+- API 使用ポリシー: [docs/azure-updates-api-manual.md](./docs/azure-updates-api-manual.md)
+- プライバシーステートメント: [docs/PRIVACY.md](./docs/PRIVACY.md)
 
 ## セットアップ
 

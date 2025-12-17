@@ -16,6 +16,21 @@ An MCP (Model Context Protocol) server that provides AI assistants with seamless
 - 🔄 **Automatic Sync** - Differential synchronization keeps data fresh (configurable interval, default 24h).
 - 📊 **Help Resource** - Expose all available filters and data freshness to help AI construct queries.
 
+## Legal Notice
+
+⚠️ **Important**: This server accesses the Azure Updates API, which is subject to [Microsoft APIs Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use). By using this software, you agree to:
+
+- Comply with all applicable Microsoft API terms and conditions
+- Not use the data for advertising or marketing purposes
+- Implement appropriate data protection measures
+- Respect Microsoft's intellectual property rights
+
+This software is provided under the MIT License for the code implementation only. The data accessed through the Azure Updates API remains subject to Microsoft's terms.
+
+**Additional Resources:**
+- API Usage Policies: [docs/azure-updates-api-manual.md](./docs/azure-updates-api-manual.md)
+- Privacy Statement: [docs/PRIVACY.md](./docs/PRIVACY.md)
+
 ## Setup
 
 **Step 1: Get the tarball package**

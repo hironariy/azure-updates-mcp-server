@@ -17,6 +17,50 @@ This document describes the data source for collecting Azure updates information
 
 **Total Records:** ~9,300+ items (as of 2025-12-16)
 
+### Terms of Use and Legal Considerations
+
+⚠️ **Important Legal Notice**
+
+**API Governance:**
+- This API is likely governed by the [Microsoft APIs Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use)
+- By accessing or using this API, you agree to comply with applicable Microsoft terms and any accompanying documentation
+
+**Key Terms:**
+- **License**: Limited, non-exclusive, non-transferable, revocable license for application development and testing
+- **Use Restrictions**: 
+  - Do not use data for advertising or marketing purposes (targeting or serving ads)
+  - Do not impair, harm, or attempt unauthorized access to the API or related services
+  - Do not transfer or sell access credentials
+- **Changes Without Notice**: Microsoft may change, discontinue, or impose limits on API availability at any time without prior notice
+- **No Warranty**: The API is provided "as is" without warranties or guaranteed support
+- **No SLA**: No service level agreement is currently documented for this endpoint
+
+**Privacy and Data Protection:**
+- You must comply with all applicable privacy, data protection, and communication confidentiality laws
+- Implement appropriate data retention and deletion policies
+- Obtain necessary consents before processing data accessed through the API
+- Maintain a privacy statement as protective as the Microsoft Privacy Statement
+
+**Best Practices:**
+- **Authentication**: Currently no authentication is required, but this may change
+- **Rate Limiting**: No explicit limits documented, but implement exponential backoff for 5xx errors
+- **Respectful Usage**: Avoid excessive request rates that could impact service availability
+- **Monitoring**: Regularly check the OData `$metadata` endpoint for schema changes
+- **Error Handling**: Implement robust retry logic with exponential backoff
+
+**Disclaimer:**
+- This API endpoint is publicly accessible but lacks official documentation for terms, rate limits, and SLA
+- Microsoft reserves the right to modify, restrict, or discontinue access at any time
+- For production use, consider implementing graceful degradation and fallback mechanisms
+- This documentation is based on observed behavior and publicly available information
+
+**Recommended Actions:**
+1. Review the [Microsoft APIs Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use) before production deployment
+2. Implement monitoring to detect API availability or schema changes
+3. Design your application to handle service interruptions gracefully
+4. Do not store excessive amounts of data; implement appropriate retention policies
+5. Respect Microsoft's intellectual property rights in the data provided
+
 ### OData Query Parameters
 
 | Parameter | Type | Description | Example |
@@ -721,7 +765,64 @@ In the future, we plan to implement a manual data source that allows administrat
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: 2025-12-16  
+## Legal and Compliance
+
+### Microsoft APIs Terms of Use
+
+This API is subject to Microsoft's standard API terms. Key points include:
+
+**Your Obligations:**
+- Comply with all applicable laws regarding privacy, data protection, and communications
+- Do not use API data for advertising or marketing purposes
+- Implement appropriate security measures to protect accessed data
+- Maintain accurate application registration information (if required)
+- Provide a privacy statement to your users
+
+**Microsoft's Rights:**
+- May change or discontinue the API at any time without notice
+- May impose usage limits, require fees, or restrict access
+- May modify these terms at any time
+- Reserves all rights not expressly granted
+
+**Prohibited Activities:**
+- Impairing or harming Microsoft services or the API
+- Disrupting or attempting unauthorized access to related services
+- Transferring or selling access credentials
+- Using data outside permissions granted by end users
+
+**Disclaimer:**
+- API provided "as is" without warranties
+- No guaranteed support services
+- Microsoft retains all intellectual property rights
+
+**For Full Terms:**
+Visit [Microsoft APIs Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use)
+
+### Data Usage Compliance
+
+**If you store data locally:**
+1. Keep data up to date with changes reflected in the API
+2. Implement corrections, restrictions, or deletions as needed
+3. Delete all data when users abandon or uninstall your application
+4. Implement proper data retention and deletion policies
+
+**Privacy Requirements:**
+- Obtain necessary consents before processing data
+- Provide users with a way to revoke access permissions
+- Clearly communicate your data handling practices
+- Comply with GDPR, CCPA, and other applicable regulations
+
+### Audit Rights
+
+Microsoft may request access to your application to verify compliance with API terms, including security and privacy obligations. You must cooperate with such audits.
+
+---
+
+**Document Version**: 1.1  
+**Last Updated**: 2025-12-17  
 **API Analysis Date**: 2025-12-16  
 **Total Records Analyzed**: 9,316 items
+
+**Change Log:**
+- v1.1 (2025-12-17): Added Terms of Use and Legal Considerations sections
+- v1.0 (2025-12-16): Initial documentation release
