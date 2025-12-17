@@ -30,25 +30,21 @@ AI アシスタントが Azure サービスの更新情報、廃止予定、機�
 
 ## セットアップ
 
-**ステップ 1: tarball パッケージの取得**
+### オプション 1: グローバルインストール（推奨）
 
-内部配布チャネルから `azure-updates-mcp-server-{version}.tgz` を入手してください。
-
-**ステップ 2: グローバルインストール**
+GitHub からグローバルにインストールします:
 
 ```bash
-npm install -g ./azure-updates-mcp-server-{version}.tgz
+npm install -g github:juyamagu/azure-updates-mcp-server
 ```
 
-**ステップ 3: MCP サーバーの起動**
-
-`azure-updates-mcp-server` コマンドで MCP サーバーを起動できます。VS Code を使用している場合、以下の設定 (`.vscode/mcp.json`) でサーバーを起動します:
+その後、VS Code を設定します (`.vscode/mcp.json`):
 
 ```jsonc
 {
   "servers": {
     "azure-updates-mcp": {
-      "command": "azure-updates-mcp-server",
+      "command": "azure-updates-mcp-server"
       // 以下の環境変数はオプションです。必要に応じて設定してください
       // "env": {
       //   "DATABASE_PATH": "${workspaceFolder}/.azure-updates/data.db",
@@ -60,22 +56,24 @@ npm install -g ./azure-updates-mcp-server-{version}.tgz
 }
 ```
 
-> **⚠️ 注意**: 初回起動時にはローカルキャッシュへのデータ同期が行われるため、検索できるようになるまで数分かかる場合があります。同期が完了すると、以降のクエリは高速に応答します。
+### オプション 2: npx を使用
 
-### 代替方法: npx を使用
-
-グローバルインストールせずに `npx` で実行することもできます:
+インストールなしでクイックテストを行う場合:
 
 ```jsonc
 {
   "servers": {
     "azure-updates-mcp": {
       "command": "npx",
-      "args": ["~/azure-updates-mcp-server-{version}.tgz"],
+      "args": ["-y", "github:juyamagu/azure-updates-mcp-server"]
     }
   }
 }
 ```
+
+> **注**: npx はパッケージをキャッシュするため、時間の経過とともにディスク容量を多く消費する可能性があります。通常使用にはグローバルインストールを推奨します。
+
+> **⚠️ 注意**: 初回起動時にはローカルキャッシュへのデータ同期が行われるため、検索できるようになるまで数分かかる場合があります。同期が完了すると、以降のクエリは高速に応答します。
 
 ## 使い方
 
@@ -219,6 +217,7 @@ FTS5 全文検索を備えたローカル SQLite レプリケーションによ�
 ## ドキュメント
 
 - [開発ガイド](./docs/development.md) - コントリビューションとテスト
+- [Tarball パッケージからのインストール](./docs/installation-from-tarball.md) - パッケージベースのインストール
 - [トラブルシューティング](./docs/troubleshooting.md) - 一般的な問題
 - [MCP ベストプラクティス](./docs/mcp-best-practices.md) - ツール設計ガイドライン
 - [Azure Updates API マニュアル](./docs/azure-updates-api-manual.md) - API リファレンス

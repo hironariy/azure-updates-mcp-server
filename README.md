@@ -33,26 +33,22 @@ This software is provided under the MIT License for the code implementation only
 
 ## Setup
 
-**Step 1: Get the tarball package**
+### Option 1: Global Installation (Recommended)
 
-Obtain `azure-updates-mcp-server-{version}.tgz` from your internal distribution channel.
-
-**Step 2: Install globally**
+Install globally from GitHub:
 
 ```bash
-npm install -g ./azure-updates-mcp-server-{version}.tgz
+npm install -g github:juyamagu/azure-updates-mcp-server
 ```
 
-**Step 3: Run the MCP server**
-
-Now, you can run the MCP server via `azure-updates-mcp-server` command. If you're using VS Code, the following configuration (`.vscode/mcp.json`) will launch the server:
+Then configure VS Code (`.vscode/mcp.json`):
 
 ```jsonc
 {
   "servers": {
     "azure-updates-mcp": {
-      "command": "azure-updates-mcp-server",
-      // Those environment variables are optional; configure as needed
+      "command": "azure-updates-mcp-server"
+      // Optional environment variables:
       // "env": {
       //   "DATABASE_PATH": "${workspaceFolder}/.azure-updates/data.db",
       //   "SYNC_STALENESS_HOURS": "24",
@@ -65,20 +61,22 @@ Now, you can run the MCP server via `azure-updates-mcp-server` command. If you'r
 
 > **⚠️ Note**: On the first run, data synchronization to the local cache will occur, which may take a few minutes before search queries can be served. Once synchronization is complete, subsequent queries will respond quickly.
 
-### Alternative: Using npx
+### Option 2: Using npx
 
-Or, simply run with `npx` without global installation:
+For quick testing without installation:
 
 ```jsonc
 {
   "servers": {
     "azure-updates-mcp": {
       "command": "npx",
-      "args": ["~/azure-updates-mcp-server-{version}.tgz"],
+      "args": ["-y", "github:juyamagu/azure-updates-mcp-server"]
     }
   }
 }
 ```
+
+> **Note**: npx caches packages which may consume more disk space over time. Global installation is recommended for regular use.
 
 ## Usage
 
@@ -221,9 +219,9 @@ See [Troubleshooting Guide](./docs/troubleshooting.md) for common issues and sol
 
 ## Documentation
 
-- [Development Guide](./docs/development.md) - Contributing and testing
+- [Installation from Tarball](./docs/installation-from-tarball.md) - Package-based installation
 - [Troubleshooting](./docs/troubleshooting.md) - Common issues
-- [MCP Best Practices](./docs/mcp-best-practices.md) - Tool design guidelines
+- [Development Guide](./docs/development.md) - Contributing and testing
 - [Azure Updates API Manual](./docs/azure-updates-api-manual.md) - API reference
 
 ## License
