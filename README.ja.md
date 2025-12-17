@@ -28,12 +28,12 @@ npm install -g ./azure-updates-mcp-server-{version}.tgz
 
 **ステップ 3: MCP サーバーの起動**
 
-`azure-updates-mcp-server` コマンドで MCP サーバーを起動できます。VS Code を使用している場合、以下の設定でサーバーを起動します:
+`azure-updates-mcp-server` コマンドで MCP サーバーを起動できます。VS Code を使用している場合、以下の設定 (`.vscode/mcp.json`) でサーバーを起動します:
 
 ```jsonc
 {
-  "cline.mcpServers": {
-    "azure-updates": {
+  "servers": {
+    "azure-updates-mcp": {
       "command": "azure-updates-mcp-server",
       // 以下の環境変数はオプションです。必要に応じて設定してください
       // "env": {
@@ -51,8 +51,8 @@ npm install -g ./azure-updates-mcp-server-{version}.tgz
 
 ```jsonc
 {
-  "cline.mcpServers": {
-    "azure-updates": {
+  "servers": {
+    "azure-updates-mcp": {
       "command": "npx",
       "args": ["~/azure-updates-mcp-server-{version}.tgz"],
     }

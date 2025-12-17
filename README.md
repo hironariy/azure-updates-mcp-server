@@ -30,12 +30,12 @@ npm install -g ./azure-updates-mcp-server-{version}.tgz
 
 **Step 3: Run the MCP server**
 
-Now, you can run the MCP server via `azure-updates-mcp-server` command. If you're using VS Code, the following configuration will launch the server:
+Now, you can run the MCP server via `azure-updates-mcp-server` command. If you're using VS Code, the following configuration (`.vscode/mcp.json`) will launch the server:
 
 ```jsonc
 {
-  "cline.mcpServers": {
-    "azure-updates": {
+  "servers": {
+    "azure-updates-mcp": {
       "command": "azure-updates-mcp-server",
       // Those environment variables are optional; configure as needed
       // "env": {
@@ -53,8 +53,8 @@ Or, simply run with `npx` without global installation:
 
 ```jsonc
 {
-  "cline.mcpServers": {
-    "azure-updates": {
+  "servers": {
+    "azure-updates-mcp": {
       "command": "npx",
       "args": ["~/azure-updates-mcp-server-{version}.tgz"],
     }
