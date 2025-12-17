@@ -48,12 +48,6 @@ Then configure VS Code (`.vscode/mcp.json`):
   "servers": {
     "azure-updates": {
       "command": "azure-updates-mcp-server"
-      // Optional environment variables:
-      // "env": {
-      //   "DATABASE_PATH": "${workspaceFolder}/.azure-updates/data.db",
-      //   "SYNC_STALENESS_HOURS": "24",
-      //   "LOG_LEVEL": "info"
-      // }
     }
   }
 }
@@ -71,6 +65,12 @@ For quick testing without installation:
     "azure-updates": {
       "command": "npx",
       "args": ["-y", "github:juyamagu/azure-updates-mcp-server"]
+      // Optional environment variables:
+      // "env": {
+      //   "DATABASE_PATH": "${workspaceFolder}/.azure-updates/data.db",
+      //   "SYNC_STALENESS_HOURS": "24",
+      //   "LOG_LEVEL": "info"
+      // }
     }
   }
 }
@@ -92,7 +92,7 @@ Your assistant automatically constructs the appropriate parameters and calls the
 {
   "tool": "search_azure_updates",
   "parameters": {
-    "query": "OAuth authentication security",
+    "query": "OAuth",
     "filters": {
       "tags": ["Security"],
       "dateFrom": "2025-01-01"
@@ -104,8 +104,8 @@ Your assistant automatically constructs the appropriate parameters and calls the
 
 Sample agent definitions for GitHub Copilot can be found in:
 
-- [.github/agents/azupdates.retire.agent.md](./.github/agents/azupdates.retire.agent.md)
-- [.github/agents/azupdates.update.agent.md](./.github/agents/azupdates.update.agent.md)
+- [.github/agents/azupdates.search.agent.md](./.github/agents/azupdates.search.agent.md)
+- [.github/agents/azupdates.ask.agent.md](./.github/agents/azupdates.ask.agent.md)
 
 ## Configuration
 
@@ -124,38 +124,27 @@ See [.env.example](./.env.example) for all configuration options.
 
 ## Available Tools
 
-### Two-Tool Architecture
+### `search_azure_updates`
 
-This server provides a two-tool pattern for efficient discovery and detail retrieval:
+Search and filter Azure updates to find relevant items. Returns **metadata only** (no descriptions) for token efficiency.
 
-#### 1. `search_azure_updates` - Lightweight Discovery
-
-Search and filter Azure updates to find relevant items. Returns **metadata only** (no descriptions) for 80% token reduction.
-
-**Key Features:**
-- **Phrase search**: Use quotes for exact phrases (`"Azure Virtual Machines"`)
-- **FTS5 search**: Searches title + description with BM25 relevance ranking
-- **Structured filters**: Tags, products, categories (AND semantics), dates, status
-- **Sorting**: By modified/created date, retirement date, or relevance
-
-**Example:**
+**Example Parameters:**
 ```json
 {
-  "query": "OAuth authentication security",
+  "query": "OAuth",
   "filters": {
     "tags": ["Security"],
-    "productCategories": ["Compute"],
     "dateFrom": "2025-01-01"
   },
   "limit": 10
 }
 ```
 
-#### 2. `get_azure_update` - Full Details
+### `get_azure_update`
 
 Retrieve complete update details including full Markdown description and URL.
 
-**Example:**
+**Example Parameters:**
 ```json
 {
   "id": "536699"
@@ -163,10 +152,9 @@ Retrieve complete update details including full Markdown description and URL.
 ```
 
 **Recommended Workflow:**
+
 1. Use `search_azure_updates` to find relevant updates
 2. Use `get_azure_update` to fetch full details for selected items
-
-For more examples, see the `azure-updates://guide` resource (distributed through MCP protocol).
 
 ## Architecture
 

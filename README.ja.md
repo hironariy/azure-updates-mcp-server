@@ -45,12 +45,6 @@ npm install -g github:juyamagu/azure-updates-mcp-server
   "servers": {
     "azure-updates": {
       "command": "azure-updates-mcp-server"
-      // 以下の環境変数はオプションです。必要に応じて設定してください
-      // "env": {
-      //   "DATABASE_PATH": "${workspaceFolder}/.azure-updates/data.db",
-      //   "SYNC_STALENESS_HOURS": "24",
-      //   "LOG_LEVEL": "info"
-      // }
     }
   }
 }
@@ -66,6 +60,12 @@ npm install -g github:juyamagu/azure-updates-mcp-server
     "azure-updates": {
       "command": "npx",
       "args": ["-y", "github:juyamagu/azure-updates-mcp-server"]
+      // 以下の環境変数はオプションです。
+      // "env": {
+      //   "DATABASE_PATH": "${workspaceFolder}/.azure-updates/data.db",
+      //   "SYNC_STALENESS_HOURS": "24",
+      //   "LOG_LEVEL": "info"
+      // }
     }
   }
 }
@@ -89,7 +89,7 @@ AI アシスタントに自然言語クエリとオプションのフィルタ�
 {
   "tool": "search_azure_updates",
   "parameters": {
-    "query": "OAuth authentication security",
+    "query": "OAuth",
     "filters": {
       "tags": ["Security"],
       "dateFrom": "2025-01-01"
@@ -101,8 +101,8 @@ AI アシスタントに自然言語クエリとオプションのフィルタ�
 
 GitHub Copilot 用のサンプルエージェント定義は以下にあります:
 
-- [.github/agents/azupdates.retire.agent.md](./.github/agents/azupdates.retire.agent.md)
-- [.github/agents/azupdates.update.agent.md](./.github/agents/azupdates.update.agent.md)
+- [.github/agents/azupdates.search.agent.md](./.github/agents/azupdates.search.agent.md)
+- [.github/agents/azupdates.ask.agent.md](./.github/agents/azupdates.ask.agent.md)
 
 ## 設定
 
@@ -121,38 +121,27 @@ GitHub Copilot 用のサンプルエージェント定義は以下にありま�
 
 ## 利用可能なツール
 
-### 2 ツールアーキテクチャ
+### `search_azure_updates`
 
-このサーバーは、効率的な検索と詳細取得のための2ツールパターンを提供します:
+Azure 更新情報を検索・フィルタリングして関連するアイテムを見つけます。トークン効率のため**メタデータのみ**を返します（説明文なし）。
 
-#### 1. `search_azure_updates` - 軽量な検索
-
-Azure 更新情報を検索・フィルタリングして関連するアイテムを見つけます。**メタデータのみ**を返し(説明文なし)、トークン使用量を 80% 削減します。
-
-**主な機能:**
-- **フレーズ検索**: 引用符で完全一致フレーズを検索 (`"Azure Virtual Machines"`)
-- **FTS5 検索**: BM25 関連性ランキングでタイトル+説明を検索
-- **構造化フィルタ**: タグ、製品、カテゴリ (AND 演算)、日付、ステータス
-- **ソート**: 更新日、作成日、廃止日、関連性でソート
-
-**例:**
+**パラメータ例:**
 ```json
 {
-  "query": "OAuth authentication security",
+  "query": "OAuth",
   "filters": {
     "tags": ["Security"],
-    "productCategories": ["Compute"],
     "dateFrom": "2025-01-01"
   },
   "limit": 10
 }
 ```
 
-#### 2. `get_azure_update` - 完全な詳細情報
+### `get_azure_update`
 
 Markdown 形式の完全な説明文と URL を含む、更新情報の全詳細を取得します。
 
-**例:**
+**パラメータ例:**
 ```json
 {
   "id": "536699"
@@ -160,10 +149,9 @@ Markdown 形式の完全な説明文と URL を含む、更新情報の全詳細
 ```
 
 **推奨ワークフロー:**
+
 1. `search_azure_updates` で関連する更新情報を検索
 2. `get_azure_update` で選択したアイテムの完全な詳細を取得
-
-その他の例については、`azure-updates://guide` リソース (MCP プロトコルを通じて配布) を参照してください。
 
 ## アーキテクチャ
 
@@ -216,10 +204,9 @@ FTS5 全文検索を備えたローカル SQLite レプリケーションによ�
 
 ## ドキュメント
 
-- [開発ガイド](./docs/development.md) - コントリビューションとテスト
 - [Tarball パッケージからのインストール](./docs/installation-from-tarball.md) - パッケージベースのインストール
 - [トラブルシューティング](./docs/troubleshooting.md) - 一般的な問題
-- [MCP ベストプラクティス](./docs/mcp-best-practices.md) - ツール設計ガイドライン
+- [開発ガイド](./docs/development.md) - コントリビューションとテスト
 - [Azure Updates API マニュアル](./docs/azure-updates-api-manual.md) - API リファレンス
 
 ## ライセンス
