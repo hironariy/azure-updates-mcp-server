@@ -78,6 +78,17 @@ For quick testing without installation:
 
 > **Note**: npx caches packages which may consume more disk space over time. Global installation is recommended for regular use.
 
+### For Windows Users
+
+If `npm install ...` fails on Windows (due to path length limitations or `tsc` errors), try manual installation from the `.tgz` file.
+
+Copy the URL of the latest `.tgz` file (e.g., `azure-updates-mcp-server-1.2.0.tgz`) from the [Releases page](https://github.com/juyamagu/azure-updates-mcp-server/releases) and install directly. This eliminates the need for local builds.
+
+```bash
+# Replace the URL with the actual latest release
+npm install -g https://github.com/juyamagu/azure-updates-mcp-server/releases/download/v1.2.0/azure-updates-mcp-server-1.2.0.tgz
+```
+
 ## Usage
 
 All you need is to ask your AI assistant to use the `search_azure_updates` tool with natural language queries and optional filters. 

@@ -50,6 +50,19 @@ npm install -g github:juyamagu/azure-updates-mcp-server
 }
 ```
 
+> **⚠️ 注意**: 初回起動時にはローカルキャッシュへのデータ同期が行われるため、検索できるようになるまで数分かかる場合があります。同期が完了すると、以降のクエリは高速に応答します。
+
+### Windows ユーザーの方へ
+
+Windows 環境で `npm install ...` が失敗する場合（パスの長さ制限や `tsc` エラーなど）、`tgz` からの手動インストールをお試しください。
+
+[Releases ページ](https://github.com/juyamagu/azure-updates-mcp-server/releases)から最新の `.tgz` ファイル（例: `azure-updates-mcp-server-1.2.0.tgz`）の URL をコピーし、直接インストールします。これによりローカルでのビルドが不要になります。
+
+```bash
+# URL は実際の最新リリースのものに置き換えてください
+npm install -g https://github.com/juyamagu/azure-updates-mcp-server/releases/download/v1.2.0/azure-updates-mcp-server-1.2.0.tgz
+```
+
 ### オプション 2: npx を使用
 
 インストールなしでクイックテストを行う場合:
@@ -73,7 +86,6 @@ npm install -g github:juyamagu/azure-updates-mcp-server
 
 > **注**: npx はパッケージをキャッシュするため、時間の経過とともにディスク容量を多く消費する可能性があります。通常使用にはグローバルインストールを推奨します。
 
-> **⚠️ 注意**: 初回起動時にはローカルキャッシュへのデータ同期が行われるため、検索できるようになるまで数分かかる場合があります。同期が完了すると、以降のクエリは高速に応答します。
 
 ## 使い方
 
