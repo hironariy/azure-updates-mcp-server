@@ -284,23 +284,20 @@ function validateInput(args: unknown): ValidationResult {
 function buildSearchFilters(inputFilters: ToolInput['filters']): SearchFilters {
     if (!inputFilters) return {};
 
-    // Map of filter keys to extract from input
-    const filterKeys: Array<keyof SearchFilters> = [
-        'status',
-        'availabilityRing',
-        'dateFrom',
-        'dateTo',
-        'retirementDateFrom',
-        'retirementDateTo',
-    ];
-
     const filters: SearchFilters = {};
 
-    for (const key of filterKeys) {
-        if (inputFilters[key]) {
-            filters[key] = inputFilters[key];
-        }
-    }
+    // Copy string filters
+    if (inputFilters.status) filters.status = inputFilters.status;
+    if (inputFilters.availabilityRing) filters.availabilityRing = inputFilters.availabilityRing;
+    if (inputFilters.dateFrom) filters.dateFrom = inputFilters.dateFrom;
+    if (inputFilters.dateTo) filters.dateTo = inputFilters.dateTo;
+    if (inputFilters.retirementDateFrom) filters.retirementDateFrom = inputFilters.retirementDateFrom;
+    if (inputFilters.retirementDateTo) filters.retirementDateTo = inputFilters.retirementDateTo;
+
+    // Copy array filters
+    if (inputFilters.tags) filters.tags = inputFilters.tags;
+    if (inputFilters.products) filters.products = inputFilters.products;
+    if (inputFilters.productCategories) filters.productCategories = inputFilters.productCategories;
 
     return filters;
 }
@@ -354,7 +351,6 @@ function validateSortBy(sortBy: unknown, errors: string[]): void {
     }
 
     const validSortOptions = [
-        'relevance',
         'modified:desc',
         'modified:asc',
         'created:desc',

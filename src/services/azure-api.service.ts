@@ -305,6 +305,7 @@ function convertApiRecordToUpdate(apiRecord: AzureUpdateApiRecord): AzureUpdate 
         id: apiRecord.id,
         title: apiRecord.title,
         description: apiRecord.description || '',
+        url: `https://azure.microsoft.com/en-us/updates/?id=${apiRecord.id}`,
         status: apiRecord.status || null,
         locale: apiRecord.locale || null,
         created: apiRecord.created,

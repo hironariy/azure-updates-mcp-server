@@ -113,7 +113,7 @@ export function searchUpdates(
         id: row.id,
         title: row.title,
         description: row.description,
-        descriptionMarkdown: row.descriptionMarkdown ?? undefined,
+        url: `https://azure.microsoft.com/en-us/updates/?id=${row.id}`,
         status: row.status,
         locale: row.locale,
         created: row.created,
@@ -189,7 +189,7 @@ function buildSearchQuery(
 
         const whereClause = whereClauses.length > 0 ? `AND ${whereClauses.join(' AND ')}` : '';
 
-        const orderByClause = buildOrderByClause(sortBy, true);
+        const orderByClause = buildOrderByClause(sortBy);
 
         const sql = `
             ${baseQuery}
@@ -221,7 +221,7 @@ function buildSearchQuery(
 
     const whereClause = filterClauses.length > 0 ? `WHERE ${filterClauses.join(' AND ')}` : '';
 
-    const orderByClause = buildOrderByClause(sortBy, false);
+    const orderByClause = buildOrderByClause(sortBy);
 
     const sql = `
         ${baseQuery}
@@ -348,34 +348,89 @@ function buildFilterClauses(
         params.push(filters.retirementDateTo);
     }
 
+    // Tags filter with AND semantics (result must have ALL specified tags)
+    if (filters.tags && filters.tags.length > 0) {
+        for (const tag of filters.tags) {
+            clauses.push(`EXISTS (
+                SELECT 1 FROM update_tags ut 
+                WHERE ut.update_id = au.id AND ut.tag = ?
+            )`);
+            params.push(tag);
+        }
+    }
+
+    // Products filter with AND semantics (result must have ALL specified products)
+    if (filters.products && filters.products.length > 0) {
+        for (const product of filters.products) {
+            clauses.push(`EXISTS (
+                SELECT 1 FROM update_products up 
+                WHERE up.update_id = au.id AND up.product = ?
+            )`);
+            params.push(product);
+        }
+    }
+
+    // Product categories filter with AND semantics (result must have ALL specified categories)
+    if (filters.productCategories && filters.productCategories.length > 0) {
+        for (const category of filters.productCategories) {
+            clauses.push(`EXISTS (
+                SELECT 1 FROM update_categories uc 
+                WHERE uc.update_id = au.id AND uc.category = ?
+            )`);
+            params.push(category);
+        }
+    }
+
     return clauses;
 }
 
 /**
- * Sanitize FTS5 query to prevent syntax errors
+ * Sanitize FTS5 query to prevent syntax errors and support phrase search
+ * 
+ * Supports phrase search syntax:
+ * - "exact phrase" → phrase search in FTS5
+ * - other words → OR logic with prefix matching
  * 
  * @param query User input query
  * @returns Sanitized FTS5 query string
  */
 function sanitizeFtsQuery(query: string): string {
-    // Remove special FTS5 characters that could cause syntax errors
-    const sanitized = query
-        .replace(/[(){}[\]^~*:]/g, ' ') // Remove FTS5 operators
-        .replace(/[""]/g, '"') // Normalize quotes
-        .replace(/\s+/g, ' ') // Normalize whitespace
+    const phrases: string[] = [];
+    const tokens: string[] = [];
+
+    // Extract quoted phrases and replace with placeholders
+    let processed = query.replace(/"([^"]+)"/g, (_match, phrase) => {
+        const index = phrases.length;
+        // Escape double quotes in phrase content for FTS5
+        const escapedPhrase = phrase.replace(/"/g, '""');
+        phrases.push(`"${escapedPhrase}"`); // FTS5 phrase syntax
+        return `__PHRASE_${index}__`;
+    });
+
+    // Sanitize remaining text (remove FTS5 operators)
+    processed = processed
+        .replace(/[(){}[\]^~*:]/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
 
-    // Split into words and join with OR for broad matching
-    const words = sanitized
-        .split(' ')
-        .filter(word => word.length > 0)
-        .map(word => {
-            // Escape remaining special characters
-            const escaped = word.replace(/"/g, '""');
-            return `"${escaped}"*`; // Prefix matching
-        });
+    // Split into words and process
+    const words = processed.split(' ').filter(word => word.length > 0);
 
-    return words.join(' OR ');
+    for (const word of words) {
+        // Check if it's a phrase placeholder
+        const phraseMatch = word.match(/^__PHRASE_(\d+)__$/);
+        if (phraseMatch) {
+            const index = parseInt(phraseMatch[1], 10);
+            tokens.push(phrases[index]);
+        } else {
+            // Regular word - escape and add prefix matching
+            const escaped = word.replace(/"/g, '""');
+            tokens.push(`"${escaped}"*`);
+        }
+    }
+
+    // Join tokens with OR logic
+    return tokens.length > 0 ? tokens.join(' OR ') : '""';
 }
 
 /**
@@ -395,23 +450,21 @@ function getRetirementDateSubquery(): string {
 /**
  * Get default order by clause
  * 
- * @param hasKeywordSearch Whether this is a keyword search
- * @returns Default ORDER BY clause
+ * @returns Default ORDER BY clause (always modified:desc)
  */
-function getDefaultOrderBy(hasKeywordSearch: boolean): string {
-    return hasKeywordSearch ? 'ORDER BY fts.rank, au.modified DESC' : 'ORDER BY au.modified DESC';
+function getDefaultOrderBy(): string {
+    return 'ORDER BY au.modified DESC';
 }
 
 /**
  * Build ORDER BY clause based on sortBy parameter
  * 
  * @param sortBy Sort parameter (e.g., 'modified:desc', 'retirementDate:asc')
- * @param hasKeywordSearch Whether this is a keyword search (uses FTS relevance)
  * @returns SQL ORDER BY clause
  */
-function buildOrderByClause(sortBy: string | undefined, hasKeywordSearch: boolean): string {
-    if (!sortBy || sortBy === 'relevance') {
-        return getDefaultOrderBy(hasKeywordSearch);
+function buildOrderByClause(sortBy: string | undefined): string {
+    if (!sortBy) {
+        return getDefaultOrderBy();
     }
 
     const sortMap: Record<string, string> = {
@@ -423,5 +476,5 @@ function buildOrderByClause(sortBy: string | undefined, hasKeywordSearch: boolea
         'retirementDate:desc': `ORDER BY ${getRetirementDateSubquery()} DESC`,
     };
 
-    return sortMap[sortBy] ?? getDefaultOrderBy(hasKeywordSearch);
+    return sortMap[sortBy] ?? getDefaultOrderBy();
 }

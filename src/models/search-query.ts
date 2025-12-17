@@ -26,6 +26,9 @@ export interface SearchFilters {
     dateTo?: string; // ISO 8601 date - include updates modified/available on or before this date
     retirementDateFrom?: string; // ISO 8601 date - include updates with retirement date on or after this date
     retirementDateTo?: string; // ISO 8601 date - include updates with retirement date on or before this date
+    tags?: string[]; // Filter by tags - result must contain ALL specified tags (AND semantics)
+    products?: string[]; // Filter by products - result must contain ALL specified products (AND semantics)
+    productCategories?: string[]; // Filter by product categories - result must contain ALL specified categories (AND semantics)
 }
 
 /**

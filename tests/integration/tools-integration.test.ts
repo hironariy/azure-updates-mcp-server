@@ -107,7 +107,7 @@ describe('Tools Integration - Two-Tool Workflow', () => {
             expect(update.id).toBe(updateId);
             expect(update.title).toBe('Azure Virtual Machines Security Update');
             expect(update.description).toContain('CVE-2025-12345');
-            expect(update.descriptionMarkdown).toContain('CVE-2025-12345');
+            expect(update.url).toBe(`https://azure.microsoft.com/en-us/updates/?id=${updateId}`);
         });
 
         it('should handle search → get workflow with retirement date filtering', () => {
@@ -144,9 +144,8 @@ describe('Tools Integration - Two-Tool Workflow', () => {
             expect(searchResponse.results.length).toBeGreaterThan(0);
             const update = searchResponse.results[0];
 
-            // Lightweight: no description fields
+            // Lightweight: no description field
             expect(update).not.toHaveProperty('description');
-            expect(update).not.toHaveProperty('descriptionMarkdown');
 
             // Essential metadata present
             expect(update).toHaveProperty('id');
@@ -162,11 +161,11 @@ describe('Tools Integration - Two-Tool Workflow', () => {
             const getResult = handleGetAzureUpdate(db, { id: 'integration-test-1' });
             const update = JSON.parse(getResult.content[0].text);
 
-            // Full update includes descriptions
+            // Full update includes description and url
             expect(update).toHaveProperty('description');
-            expect(update).toHaveProperty('descriptionMarkdown');
+            expect(update).toHaveProperty('url');
             expect(update.description).toBeTruthy();
-            expect(update.descriptionMarkdown).toBeTruthy();
+            expect(update.url).toBe('https://azure.microsoft.com/en-us/updates/?id=integration-test-1');
         });
 
         it('should demonstrate significant size reduction (80%+)', () => {
@@ -197,7 +196,6 @@ describe('Tools Integration - Two-Tool Workflow', () => {
             expect(response.results).toBeDefined();
             response.results.forEach((update: Record<string, unknown>) => {
                 expect(update).not.toHaveProperty('description');
-                expect(update).not.toHaveProperty('descriptionMarkdown');
             });
         });
 

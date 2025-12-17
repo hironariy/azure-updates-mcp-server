@@ -91,10 +91,10 @@ describe('Get Azure Update Tool', () => {
             expect(result.isError).toBe(false);
             expect(update.id).toBe('test-update-123');
             expect(update.title).toBe('Test Azure Update');
-            // description field contains HTML (from description_html column)
-            expect(update.description).toBe('<p>This is a test update</p>');
-            // descriptionMarkdown contains the converted markdown
-            expect(update.descriptionMarkdown).toBe('This is a test update');
+            // description field contains Markdown (from description_md column)
+            expect(update.description).toBe('This is a test update');
+            // url field is generated from the id
+            expect(update.url).toBe('https://azure.microsoft.com/en-us/updates/?id=test-update-123');
             expect(update.status).toBe('Active');
             expect(update.tags).toEqual(expect.arrayContaining(['Security', 'Features']));
             expect(update.tags).toHaveLength(2);

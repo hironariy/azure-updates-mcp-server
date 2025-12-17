@@ -129,14 +129,14 @@ describe('Guide Resource', () => {
             expect(retirementTip).toBeDefined();
         });
 
-        it('should explain that tags/categories/products are searchable via query', () => {
+        it('should explain structured filters with AND semantics', () => {
             const guide = generateGuideResource(db);
 
-            const searchTip = guide.queryTips.find(tip =>
-                tip.includes('Tags') && tip.includes('categories') && tip.includes('products')
+            const filterTip = guide.queryTips.find(tip =>
+                tip.includes('filters.tags') || tip.includes('filters.products') || tip.includes('filters.productCategories')
             );
-            expect(searchTip).toBeDefined();
-            expect(searchTip).toContain('query parameter');
+            expect(filterTip).toBeDefined();
+            expect(filterTip).toContain('AND semantics');
         });
 
         it('should include examples demonstrating sortBy and retirement filters', () => {

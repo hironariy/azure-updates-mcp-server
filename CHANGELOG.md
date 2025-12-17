@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Default Sort Order**: Changed default `sortBy` to always be `modified:desc` (newest first) for consistency. Previously defaulted to relevance-based sorting for keyword searches.
+- **Removed relevance option**: Removed `relevance` from `sortBy` enum. All searches now use explicit sort orders.
+
 ### Fixed
 
 - **Critical Sync Bug**: Changed differential sync filter from `modified gt` to `modified ge` to prevent missing updates published at the same timestamp. Previously, if multiple updates were published at exactly the same time, only the first one would be synced, and others would be permanently missed in subsequent syncs.

@@ -70,8 +70,8 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                 {
                     name: 'get_azure_update',
                     description:
-                        'Retrieve the complete details of a specific Azure update by its ID, including the full ' +
-                        'description in Markdown format. Use this after search_azure_updates to get detailed content.',
+                        'Retrieve complete details of a specific Azure update by ID including full descriptions in Markdown. ' +
+                        'Use after search_azure_updates to get detailed content.',
                     inputSchema: {
                         type: 'object',
                         properties: {
@@ -86,18 +86,18 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                 {
                     name: 'search_azure_updates',
                     description:
-                        'Search and filter Azure service updates. Returns lightweight metadata (id, title, status, tags, ' +
-                        'categories, products, availabilities, timestamps) without descriptions for efficient token usage. ' +
-                        'Supports natural language queries with keyword matching and structured filtering. ' +
-                        'Use get_azure_update to retrieve full details including descriptions.',
+                        'Search and filter Azure service updates. Returns lightweight metadata without descriptions (80% token reduction). ' +
+                        'Supports phrase search ("exact phrase"), structured filters (tags/products/categories with AND semantics), ' +
+                        'and pagination. Use get_azure_update to retrieve full details.',
                     inputSchema: {
                         type: 'object',
                         properties: {
                             query: {
                                 type: 'string',
                                 description:
-                                    'Natural language search query or keywords to match in title and description. ' +
-                                    'Uses full-text search with BM25 relevance ranking. Leave empty to filter only without keyword search.',
+                                    'Full-text search query (FTS5 on title + description). Supports phrase search: ' +
+                                    'enclose text in double quotes for exact phrases ("virtual machine"), other words use OR logic ' +
+                                    'with prefix matching. Case-insensitive. Leave empty to filter only without keyword search.',
                             },
                             filters: {
                                 type: 'object',
@@ -128,12 +128,27 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                                         type: 'string',
                                         description: 'ISO 8601 date - include updates with retirement date on or before this date (filters by Retirement availability ring)',
                                     },
+                                    tags: {
+                                        type: 'array',
+                                        items: { type: 'string' },
+                                        description: 'Filter by tags - result must contain ALL specified tags (AND semantics)',
+                                    },
+                                    products: {
+                                        type: 'array',
+                                        items: { type: 'string' },
+                                        description: 'Filter by products - result must contain ALL specified products (AND semantics)',
+                                    },
+                                    productCategories: {
+                                        type: 'array',
+                                        items: { type: 'string' },
+                                        description: 'Filter by product categories - result must contain ALL specified categories (AND semantics)',
+                                    },
                                 },
                             },
                             sortBy: {
                                 type: 'string',
-                                enum: ['relevance', 'modified:desc', 'modified:asc', 'created:desc', 'created:asc', 'retirementDate:asc', 'retirementDate:desc'],
-                                description: 'Sort order. Default is "relevance" for keyword searches, "modified:desc" for filter-only. retirementDate sorts require Retirement availability ring.',
+                                enum: ['modified:desc', 'modified:asc', 'created:desc', 'created:asc', 'retirementDate:asc', 'retirementDate:desc'],
+                                description: 'Sort order. Default is "modified:desc". retirementDate sorts require Retirement availability ring.',
                             },
                             limit: {
                                 type: 'number',

@@ -183,6 +183,7 @@ FTS5 全文検索を備えたローカル SQLite レプリケーションによ�
 
 - [開発ガイド](./docs/development.md) - コントリビューションとテスト
 - [トラブルシューティング](./docs/troubleshooting.md) - 一般的な問題
+- [MCP ベストプラクティス](./docs/mcp-best-practices.md) - ツール設計ガイドライン
 - [Azure Updates API マニュアル](./docs/azure-updates-api-manual.md) - API リファレンス
 
 ## ライセンス

@@ -116,7 +116,9 @@ describe('Search Service', () => {
             const result = searchUpdates(db, query);
 
             expect(result.results.length).toBeGreaterThan(0);
-            expect(result.results[0].title).toContain('Virtual Machines');
+            // Results are sorted by modified:desc, so find the matching result
+            const matchingResult = result.results.find(r => r.title.includes('Virtual Machines'));
+            expect(matchingResult).toBeDefined();
             expect(result.metadata.totalResults).toBeGreaterThan(0);
         });
 

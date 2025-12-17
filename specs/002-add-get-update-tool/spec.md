@@ -69,10 +69,12 @@ An AI assistant needs to find Azure retirements happening within a specific date
 - **FR-004**: System MUST modify `search_azure_updates` to remove the `id` parameter from its input schema.
 - **FR-005**: `search_azure_updates` MUST NOT return the full `description` or `descriptionMarkdown` fields in the results list.
 - **FR-006**: `search_azure_updates` MUST NOT return any description summary or snippet. It MUST return only title and metadata to maximize token savings.
-- **FR-007**: `search_azure_updates` query parameter MUST search across title, description, tags, productCategories, and products fields.
-- **FR-008**: `search_azure_updates` MUST support sorting by relevance, modified date, created date, and retirement date with explicit direction (asc/desc).
-- **FR-009**: `search_azure_updates` filters MUST include only essential metadata: status, availabilityRing, date ranges (modified and retirement).
-- **FR-010**: `resource:guide` MUST be updated to reflect the two-tool pattern, including updated examples and query tips.
+- **FR-007**: `search_azure_updates` query parameter MUST perform full-text search on title and description fields only, with case-insensitive matching and phrase search support (enclosed in double quotes).
+- **FR-008**: `search_azure_updates` MUST support phrase search syntax: text enclosed in double quotes ("exact phrase") is treated as a phrase, other words are treated as individual keywords with OR logic.
+- **FR-009**: `search_azure_updates` filters MUST support structured filtering by tags, products, and productCategories arrays with AND semantics (result must contain ALL specified values).
+- **FR-010**: `search_azure_updates` filters MUST include essential metadata: status, availabilityRing, date ranges (modified and retirement).
+- **FR-011**: `search_azure_updates` MUST support sorting by relevance, modified date, created date, and retirement date with explicit direction (asc/desc).
+- **FR-012**: `resource:guide` MUST be updated to reflect the two-tool pattern, including phrase search syntax examples and filter usage tips.
 
 ### Key Entities
 

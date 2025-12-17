@@ -185,6 +185,7 @@ See [Troubleshooting Guide](./docs/troubleshooting.md) for common issues and sol
 
 - [Development Guide](./docs/development.md) - Contributing and testing
 - [Troubleshooting](./docs/troubleshooting.md) - Common issues
+- [MCP Best Practices](./docs/mcp-best-practices.md) - Tool design guidelines
 - [Azure Updates API Manual](./docs/azure-updates-api-manual.md) - API reference
 
 ## License

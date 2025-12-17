@@ -114,10 +114,31 @@ export function generateGuideResource(db: Database.Database): GuideResourceData 
 
         usageExamples: [
             {
-                description: 'Search for security-related OAuth updates (tags/categories/products searchable via query)',
+                description: 'Phrase search: Find exact "Azure Virtual Machines" mentions',
                 query: {
-                    query: 'OAuth authentication security',
+                    query: '"Azure Virtual Machines" retirement',
                     limit: 10,
+                },
+            },
+            {
+                description: 'Filter by tags with AND semantics (must have ALL specified tags)',
+                query: {
+                    query: 'security',
+                    filters: {
+                        tags: ['Security', 'Retirements'],
+                    },
+                    limit: 10,
+                },
+            },
+            {
+                description: 'Filter by products and categories (AND semantics for each array)',
+                query: {
+                    filters: {
+                        products: ['Azure Key Vault'],
+                        productCategories: ['Security'],
+                    },
+                    sortBy: 'modified:desc',
+                    limit: 20,
                 },
             },
             {
@@ -133,11 +154,12 @@ export function generateGuideResource(db: Database.Database): GuideResourceData 
                 },
             },
             {
-                description: 'Search for machine learning preview features (availability ring filter)',
+                description: 'Combined phrase search and filters',
                 query: {
-                    query: 'machine learning',
+                    query: '"Azure Databricks" preview',
                     filters: {
-                        availabilityRing: 'Preview',
+                        tags: ['AI + machine learning'],
+                        productCategories: ['Analytics'],
                     },
                 },
             },
@@ -170,9 +192,12 @@ export function generateGuideResource(db: Database.Database): GuideResourceData 
 
         queryTips: [
             'Two-step workflow: Use search_azure_updates for discovery (returns lightweight metadata), then get_azure_update to fetch full descriptions',
-            'Tags, categories, and products are searchable via the query parameter - no need for separate filter arrays',
-            'Use natural language queries like "show me security updates" or "find database retirements"',
-            'sortBy parameter supports: relevance (default for keyword searches), modified:desc/asc, created:desc/asc, retirementDate:desc/asc',
+            'Phrase search: Use double quotes for exact matches (e.g., "Azure Virtual Machines" finds that exact phrase)',
+            'Without quotes: Words are matched with OR logic (e.g., security authentication matches "security" OR "authentication")',
+            'Combine phrase search with regular words: "Azure Databricks" preview',
+            'Structured filters: Use filters.tags, filters.products, filters.productCategories for precise filtering with AND semantics',
+            'Filter arrays require ALL values to match: tags: ["Security", "Retirements"] returns only updates with BOTH tags',
+            'sortBy parameter supports: modified:desc (default), modified:asc, created:desc/asc, retirementDate:desc/asc',
             'Use retirementDateFrom/retirementDateTo to filter by retirement dates (ISO 8601: YYYY-MM-DD)',
             'Use dateFrom/dateTo for filtering by modified/availability dates (ISO 8601: YYYY-MM-DD)',
             'Set limit (default: 20, max: 100) and offset for pagination through large result sets',

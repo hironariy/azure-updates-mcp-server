@@ -18,24 +18,25 @@ Search and filter Azure updates, returning lightweight results with metadata onl
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `query` | string | No | Natural language search query - searches across title, description, tags, categories, products |
-| `filters` | object | No | Structured filters (status, availability ring, dates, retirement dates) |
-| `sortBy` | string | No | Sort order: relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc (default: relevance for keyword searches, modified:desc otherwise) |
+| `query` | string | No | Full-text search query (FTS5 on title + description). Supports phrase search: "exact phrase" for phrases, space-separated words for OR logic |
+| `filters` | object | No | Structured filters: status, availabilityRing, dates, retirementDates, tags[], products[], productCategories[] (arrays use AND semantics) |
+| `sortBy` | string | No | Sort order: modified:desc/asc, created:desc/asc, retirementDate:desc/asc (default: modified:desc) |
 | `limit` | number | No | Maximum results to return (1-100, default: 20) |
 | `offset` | number | No | Number of results to skip for pagination (default: 0) |
 
 **Note**: The `id` parameter has been **removed**. Use `get_azure_update` instead.
 
-**Key Changes**:
-- Tags, categories, and products are now searchable via the `query` parameter (no separate filter arrays)
-- Added `sortBy` parameter for flexible sorting
-- Added `retirementDateFrom` and `retirementDateTo` filters for retirement planning
+**Key Features**:
+- **Phrase search**: Use "virtual machine" to search for exact phrases in title/description
+- **Structured filters**: Use filters.tags, filters.products, filters.productCategories with AND semantics (result must contain ALL specified values)
+- **Flexible sorting**: Sort by relevance, modified, created, or retirementDate with explicit direction (:asc/:desc)
+- **Retirement planning**: Filter by retirementDateFrom/To for proactive planning
 
-### Example: Search for Upcoming Retirements
+### Example 1: Phrase Search for Specific Product
 
 ```json
 {
-  "query": "retirement Compute",
+  "query": "\"Azure Databricks\" retirement",
   "filters": {
     "retirementDateFrom": "2026-01-01",
     "retirementDateTo": "2026-12-31"
@@ -44,6 +45,24 @@ Search and filter Azure updates, returning lightweight results with metadata onl
   "limit": 10
 }
 ```
+
+**Explanation**: Searches for the exact phrase "Azure Databricks" plus the word "retirement" in title/description fields.
+
+### Example 2: Filter by Multiple Tags
+
+```json
+{
+  "query": "virtual machine",
+  "filters": {
+    "tags": ["Retirements", "Compute"],
+    "productCategories": ["Compute"]
+  },
+  "sortBy": "modified:desc",
+  "limit": 20
+}
+```
+
+**Explanation**: Full-text search for "virtual" OR "machine" in title/description, AND result must have BOTH "Retirements" AND "Compute" tags, AND must be in "Compute" category.
 
 ### Response Structure
 
@@ -156,18 +175,21 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 
 ---
 
-### Workflow 2: Keyword Search + Detail Retrieval
+### Workflow 2: Keyword Search with Tag Filter + Detail Retrieval
 
-**Step 1**: Search for security-related updates (tags are searchable via query)
+**Step 1**: Search for security-related updates using tag filter
 ```json
 {
-  "query": "OAuth authentication security",
+  "query": "OAuth authentication",
   "filters": {
+    "tags": ["Security"],
     "dateFrom": "2025-01-01"
   },
   "sortBy": "modified:desc"
 }
 ```
+
+**Explanation**: Full-text search for "OAuth" OR "authentication" in title/description, filtered to updates with "Security" tag.
 
 **Step 2**: Get complete information for relevant updates
 ```json
@@ -178,16 +200,20 @@ Retrieve the complete details of a specific Azure update by its ID, including th
 
 ---
 
-### Workflow 3: Browse by Category
+### Workflow 3: Browse by Category and Product
 
-**Step 1**: Search for AI/ML updates (categories are searchable via query)
+**Step 1**: Search for AI/ML updates using category filter
 ```json
 {
-  "query": "AI Machine Learning",
+  "filters": {
+    "productCategories": ["AI + machine learning"]
+  },
   "sortBy": "modified:desc",
   "limit": 50
 }
 ```
+
+**Explanation**: Filter by category without keyword search. Returns all updates in "AI + machine learning" category, sorted by modification date.
 
 **Step 2**: Get details for specific updates of interest
 ```json

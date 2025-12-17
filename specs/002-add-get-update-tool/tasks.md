@@ -141,6 +141,41 @@
 
 ---
 
+## Phase 8: User Story 4 - Phrase Search & Structured Filters (Priority: P1)
+
+**Goal**: Implement FTS5 phrase search for exact phrase matching and add structured filters for tags/products/categories with AND semantics
+
+**Independent Test**: Call `search_azure_updates` with phrase syntax ("exact phrase") and verify exact matching, call with filters.tags and verify AND semantics
+
+### Implementation for User Story 4
+
+- [ ] T051 [P] [US4] Modify sanitizeFtsQuery() in src/services/search.service.ts to preserve quoted phrases and support phrase search syntax
+- [ ] T052 [US4] Update FTS5 query generation in src/services/search.service.ts to use phrase search for quoted text (exact matching)
+- [ ] T053 [P] [US4] Add tags filter to SearchFilters type in src/models/search-query.ts with string[] type
+- [ ] T054 [P] [US4] Add products filter to SearchFilters type in src/models/search-query.ts with string[] type
+- [ ] T055 [P] [US4] Add productCategories filter to SearchFilters type in src/models/search-query.ts with string[] type
+- [ ] T056 [US4] Implement buildFilterClauses() in src/services/search.service.ts to support tags/products/productCategories filters with AND semantics (SQL IN with COUNT)
+- [ ] T057 [US4] Update tool schema in src/server.ts to add tags, products, productCategories filter parameters with array type and AND semantics description
+- [ ] T058 [US4] Update tool description in src/server.ts to mention phrase search syntax ("exact phrase") and filter AND semantics
+- [ ] T059 [P] [US4] Add unit tests in tests/unit/services/search.service.test.ts for phrase search syntax (quoted phrases, mixed phrases and keywords)
+- [ ] T060 [P] [US4] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for tags filter with AND semantics (single tag, multiple tags, no match)
+- [ ] T061 [P] [US4] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for products filter with AND semantics
+- [ ] T062 [P] [US4] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for productCategories filter with AND semantics
+- [ ] T063 [P] [US4] Add integration test in tests/integration/tools-integration.test.ts for phrase search with real data
+- [ ] T064 [P] [US4] Add integration test in tests/integration/tools-integration.test.ts for combined filters (tags + products + categories)
+- [ ] T065 [US4] Verify test coverage ≥80% for phrase search and filter logic
+
+**Checkpoint**: Phrase search and structured filters fully functional
+
+### Guide Resource Updates for Phrase Search
+
+- [ ] T066 [P] Add phrase search examples in src/resources/guide.resource.ts (exact phrase syntax with double quotes)
+- [ ] T067 [P] Add filter examples in src/resources/guide.resource.ts (tags, products, categories with AND semantics)
+- [ ] T068 Update query tips in src/resources/guide.resource.ts to explain FTS5 search scope (title + description only)
+- [ ] T069 Add usage example in src/resources/guide.resource.ts showing combined phrase search and filters
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -152,6 +187,7 @@
 - **User Story 3 (Phase 5)**: Depends on Foundational (T003, T004) and User Story 2 (T012-T015) modifications
 - **Integration (Phase 6)**: Depends on all user stories being complete
 - **Polish (Phase 7)**: Depends on Integration completion
+- **User Story 4 (Phase 8)**: Depends on User Story 2 (T012-T015) and User Story 3 (T019-T030) - extends search functionality with phrase search and filters
 
 ### User Story Dependencies
 
@@ -170,6 +206,9 @@
 **US3 (Retirement Filtering)**:
 - T019, T020 (add parameters) in parallel → T021, T022, T023 (implement logic) sequentially → T024, T025, T026 (schema updates) sequentially → T027, T028, T029 (tests) in parallel → T030 (coverage)
 
+**US4 (Phrase Search & Filters)**:
+- T051, T052 (phrase search) → T053, T054, T055 (filter types) in parallel → T056 (filter implementation) → T057, T058 (schema updates) → T059, T060, T061, T062, T063, T064 (tests) in parallel → T065 (coverage) → T066, T067, T068, T069 (guide updates) in parallel
+
 ### Parallel Opportunities
 
 **Foundational Phase**: T003 and T004 can run in parallel (different type definitions)
@@ -179,6 +218,8 @@
 **User Story 2**: T012 and T013 can run in parallel (separate concerns), T016 and T017 can run in parallel (independent test cases)
 
 **User Story 3**: T019 and T020 in parallel, T027/T028/T029 in parallel
+
+**User Story 4**: T053/T054/T055 in parallel (filter types), T059-T064 in parallel (all tests), T066-T069 in parallel (guide updates)
 
 **Integration Phase**: T031-T035 (guide resource changes) all in parallel, T039-T041 (integration tests) in parallel
 
@@ -235,8 +276,12 @@ If multiple developers available:
 - Search is lightweight (US2)
 - Basic two-tool pattern functional
 
-**Enhanced deliverable**: Add Phase 5 (T019-T030)
+**Enhanced deliverable v1**: Add Phase 5 (T019-T030)
 - Retirement date filtering (US3)
+
+**Enhanced deliverable v2**: Add Phase 8 (T051-T069)
+- Phrase search with FTS5 (US4)
+- Structured filters for tags/products/categories with AND semantics (US4)
 
 ---
 
@@ -247,4 +292,5 @@ If multiple developers available:
 - Tests update existing test files - no new test framework setup
 - Constitution compliance: strict TypeScript, ESLint, JSDoc, <10 complexity
 - Each user story can be validated independently before proceeding
-- Total estimated LOC: ~540 (100 get tool + 50 search mods + 40 guide + 200 unit tests + 100 integration tests + 50 polish)
+- Phase 8 (US4) refines search behavior: query parameter searches only title+description (FTS5 with phrase support), filters provide structured filtering for metadata with AND semantics
+- Total estimated LOC: ~740 (100 get tool + 50 search mods + 40 guide + 200 unit tests + 100 integration tests + 50 polish + 120 phrase search + 80 filters)

@@ -384,4 +384,237 @@ describe('Search Azure Updates Tool', () => {
             expect(result).toBeDefined();
         });
     });
+
+    describe('Tags Filter with AND Semantics', () => {
+        beforeEach(() => {
+            // Add more test data with multiple tags
+            db.prepare(`
+                INSERT INTO azure_updates (id, title, description_html, description_md, status, locale, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                'multi-tag-1',
+                'Update with multiple tags',
+                '<p>Test</p>',
+                'Test',
+                'Active',
+                'en-us',
+                '2025-01-05T00:00:00.0000000Z',
+                '2025-01-05T00:00:00.0000000Z'
+            );
+
+            db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('multi-tag-1', 'Security');
+            db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('multi-tag-1', 'Retirements');
+            db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('multi-tag-1', 'Compute');
+        });
+
+        it('should filter by single tag', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    tags: ['Security'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results.length).toBeGreaterThanOrEqual(2);
+            expect(response.results.some((r: { id: string }) => r.id === 'test-1')).toBe(true);
+            expect(response.results.some((r: { id: string }) => r.id === 'multi-tag-1')).toBe(true);
+        });
+
+        it('should filter by multiple tags with AND semantics', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    tags: ['Security', 'Retirements'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // Only multi-tag-1 has BOTH Security AND Retirements
+            expect(response.results).toHaveLength(1);
+            expect(response.results[0].id).toBe('multi-tag-1');
+        });
+
+        it('should return no results when no update has all specified tags', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    tags: ['Security', 'NonExistentTag'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results).toHaveLength(0);
+        });
+
+        it('should filter by three tags with AND semantics', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    tags: ['Security', 'Retirements', 'Compute'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // Only multi-tag-1 has all three tags
+            expect(response.results).toHaveLength(1);
+            expect(response.results[0].id).toBe('multi-tag-1');
+        });
+    });
+
+    describe('Products Filter with AND Semantics', () => {
+        beforeEach(() => {
+            db.prepare(`
+                INSERT INTO azure_updates (id, title, description_html, description_md, status, locale, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                'multi-product-1',
+                'Update with multiple products',
+                '<p>Test</p>',
+                'Test',
+                'Active',
+                'en-us',
+                '2025-01-06T00:00:00.0000000Z',
+                '2025-01-06T00:00:00.0000000Z'
+            );
+
+            db.prepare('INSERT INTO update_products (update_id, product) VALUES (?, ?)').run('multi-product-1', 'Azure Virtual Machines');
+            db.prepare('INSERT INTO update_products (update_id, product) VALUES (?, ?)').run('multi-product-1', 'Azure Batch');
+        });
+
+        it('should filter by single product', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    products: ['Azure Virtual Machines'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results.some((r: { id: string }) => r.id === 'multi-product-1')).toBe(true);
+        });
+
+        it('should filter by multiple products with AND semantics', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    products: ['Azure Virtual Machines', 'Azure Batch'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // Only multi-product-1 has BOTH products
+            expect(response.results).toHaveLength(1);
+            expect(response.results[0].id).toBe('multi-product-1');
+        });
+
+        it('should return no results when no update has all specified products', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    products: ['Azure Virtual Machines', 'NonExistentProduct'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results).toHaveLength(0);
+        });
+    });
+
+    describe('Product Categories Filter with AND Semantics', () => {
+        beforeEach(() => {
+            db.prepare(`
+                INSERT INTO azure_updates (id, title, description_html, description_md, status, locale, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                'multi-category-1',
+                'Update with multiple categories',
+                '<p>Test</p>',
+                'Test',
+                'Active',
+                'en-us',
+                '2025-01-07T00:00:00.0000000Z',
+                '2025-01-07T00:00:00.0000000Z'
+            );
+
+            db.prepare('INSERT INTO update_categories (update_id, category) VALUES (?, ?)').run('multi-category-1', 'Compute');
+            db.prepare('INSERT INTO update_categories (update_id, category) VALUES (?, ?)').run('multi-category-1', 'AI + machine learning');
+        });
+
+        it('should filter by single category', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    productCategories: ['Compute'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results.some((r: { id: string }) => r.id === 'multi-category-1')).toBe(true);
+        });
+
+        it('should filter by multiple categories with AND semantics', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    productCategories: ['Compute', 'AI + machine learning'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            // Only multi-category-1 has BOTH categories
+            expect(response.results).toHaveLength(1);
+            expect(response.results[0].id).toBe('multi-category-1');
+        });
+
+        it('should return no results when no update has all specified categories', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    productCategories: ['Compute', 'NonExistentCategory'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results).toHaveLength(0);
+        });
+    });
+
+    describe('Combined Filters', () => {
+        beforeEach(() => {
+            db.prepare(`
+                INSERT INTO azure_updates (id, title, description_html, description_md, status, locale, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                'combined-1',
+                'Update with everything',
+                '<p>Test</p>',
+                'Test',
+                'Active',
+                'en-us',
+                '2025-01-08T00:00:00.0000000Z',
+                '2025-01-08T00:00:00.0000000Z'
+            );
+
+            db.prepare('INSERT INTO update_tags (update_id, tag) VALUES (?, ?)').run('combined-1', 'Security');
+            db.prepare('INSERT INTO update_products (update_id, product) VALUES (?, ?)').run('combined-1', 'Azure Key Vault');
+            db.prepare('INSERT INTO update_categories (update_id, category) VALUES (?, ?)').run('combined-1', 'Security');
+        });
+
+        it('should filter by tags + products + categories simultaneously', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    tags: ['Security'],
+                    products: ['Azure Key Vault'],
+                    productCategories: ['Security'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results.some((r: { id: string }) => r.id === 'combined-1')).toBe(true);
+        });
+
+        it('should return no results when any filter does not match', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    tags: ['Security'],
+                    products: ['NonExistentProduct'],
+                    productCategories: ['Security'],
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.results).toHaveLength(0);
+        });
+    });
 });
