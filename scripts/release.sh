@@ -58,6 +58,7 @@ esac
 
 # Bump version
 echo -e "${GREEN}🔢 Bumping version...${NC}"
+echo -e "${YELLOW}Running: npm version ${VERSION_TYPE} --no-git-tag-version${NC}"
 npm version "$VERSION_TYPE" --no-git-tag-version
 
 NEW_VERSION=$(node -p "require('./package.json').version")
