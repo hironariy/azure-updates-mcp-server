@@ -47,6 +47,9 @@ Now, you can run the MCP server via `azure-updates-mcp-server` command. If you'r
   }
 }
 ```
+
+> **⚠️ Note**: On the first run, data synchronization to the local cache will occur, which may take a few minutes before search queries can be served. Once synchronization is complete, subsequent queries will respond quickly.
+
 ### Alternative: Using npx
 
 Or, simply run with `npx` without global installation:
