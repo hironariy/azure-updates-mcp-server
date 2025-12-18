@@ -399,7 +399,7 @@ function sanitizeFtsQuery(query: string): string {
     const tokens: string[] = [];
 
     // Extract quoted phrases and replace with placeholders
-    let processed = query.replace(/"([^"]+)"/g, (_match, phrase) => {
+    let processed = query.replace(/"([^"]+)"/g, (_match: string, phrase: string) => {
         const index = phrases.length;
         // Escape double quotes in phrase content for FTS5
         const escapedPhrase = phrase.replace(/"/g, '""');

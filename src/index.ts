@@ -23,7 +23,7 @@ import * as logger from './utils/logger.js';
 // Get version from package.json
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8'));
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8')) as { version: string };
 
 // Configuration from environment variables
 const DATABASE_PATH = process.env.DATABASE_PATH ?? join(homedir(), '.azure-updates-mcp', 'azure-updates.db');
