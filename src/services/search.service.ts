@@ -287,6 +287,12 @@ function buildCountQuery(
 /**
  * Build WHERE clauses for filters
  * 
+ * NOTE: Retirement date filtering (retirementFrom/To) operates at month granularity.
+ * The Azure API provides retirement dates as YYYY-MM only (e.g., "2026-06"),
+ * with the 1st of the month set as the canonical date in the database (2026-06-01).
+ * When filtering with specific days (e.g., 2026-06-15), the comparison still works correctly
+ * because all dates within that month compare consistently.
+ * 
  * @param filters Search filters
  * @param params Parameter array (mutated to add filter values)
  * @returns Array of WHERE clause strings
@@ -317,35 +323,39 @@ function buildFilterClauses(
     }
 
     // Date range filters
-    if (filters.dateFrom) {
+    if (filters.modifiedFrom) {
         clauses.push('au.modified >= ?');
-        params.push(filters.dateFrom);
+        params.push(filters.modifiedFrom);
     }
 
-    if (filters.dateTo) {
+    if (filters.modifiedTo) {
         clauses.push('au.modified <= ?');
-        params.push(filters.dateTo);
+        params.push(filters.modifiedTo);
     }
 
     // Retirement date range filters
-    if (filters.retirementDateFrom) {
+    // Note: Retirement dates are stored at month granularity (YYYY-MM-01 in DB).
+    // For example, an API retirement date of "2026-06" is stored as "2026-06-01".
+    // Filtering with any day within the month (e.g., "2026-06-15") works correctly
+    // because all such dates fall within the month's range.
+    if (filters.retirementFrom) {
         clauses.push(`EXISTS (
             SELECT 1 FROM update_availabilities ua 
             WHERE ua.update_id = au.id 
               AND ua.ring = 'Retirement' 
               AND ua.date >= ?
         )`);
-        params.push(filters.retirementDateFrom);
+        params.push(filters.retirementFrom);
     }
 
-    if (filters.retirementDateTo) {
+    if (filters.retirementTo) {
         clauses.push(`EXISTS (
             SELECT 1 FROM update_availabilities ua 
             WHERE ua.update_id = au.id 
               AND ua.ring = 'Retirement' 
               AND ua.date <= ?
         )`);
-        params.push(filters.retirementDateTo);
+        params.push(filters.retirementTo);
     }
 
     // Tags filter with AND semantics (result must have ALL specified tags)
@@ -436,6 +446,10 @@ function sanitizeFtsQuery(query: string): string {
 /**
  * Get retirement date subquery for sorting
  * 
+ * Retrieves the retirement date at month granularity (e.g., "2026-06-01").
+ * Note: All retirement dates from the Azure API are stored normalized to the 1st of the month
+ * in the database, providing consistent month-level sorting regardless of input precision.
+ * 
  * @returns SQL subquery to retrieve retirement date
  */
 function getRetirementDateSubquery(): string {
@@ -459,7 +473,7 @@ function getDefaultOrderBy(): string {
 /**
  * Build ORDER BY clause based on sortBy parameter
  * 
- * @param sortBy Sort parameter (e.g., 'modified:desc', 'retirementDate:asc')
+ * @param sortBy Sort parameter (e.g., 'modified:desc', 'retirement:asc')
  * @returns SQL ORDER BY clause
  */
 function buildOrderByClause(sortBy: string | undefined): string {
@@ -472,8 +486,8 @@ function buildOrderByClause(sortBy: string | undefined): string {
         'modified:asc': 'ORDER BY au.modified ASC',
         'created:desc': 'ORDER BY au.created DESC',
         'created:asc': 'ORDER BY au.created ASC',
-        'retirementDate:asc': `ORDER BY ${getRetirementDateSubquery()} ASC`,
-        'retirementDate:desc': `ORDER BY ${getRetirementDateSubquery()} DESC`,
+        'retirement:asc': `ORDER BY ${getRetirementDateSubquery()} ASC`,
+        'retirement:desc': `ORDER BY ${getRetirementDateSubquery()} DESC`,
     };
 
     return sortMap[sortBy] ?? getDefaultOrderBy();

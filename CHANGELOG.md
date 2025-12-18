@@ -15,6 +15,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Historical versioning of updates
 - Multi-language support
 
+## [2.1.0] - 2025-12-18
+
+### Changed
+
+- **Availability response format**: `search_azure_updates` / `get_azure_update` の `availabilities` を `date` ではなく、`{ ring, year, month }` 形式で返すよう変更
+  - `year`: number
+  - `month`: English month name (e.g. "March")
+  - 日付が不明な場合は `{ ring }` のみ
+- **Retirement date filters**: `filters.retirementFrom` / `filters.retirementTo` は `YYYY-MM` に加えて `YYYY-MM-DD` も許容（いずれも月粒度として扱い、内部的に月初へ正規化）
+
+### Added
+
+- Shared formatter: `src/utils/availability-formatter.ts` を追加し、availability 表示ロジックを共通化
+
+### Fixed
+
+- ドキュメント/例の更新: `modifiedFrom/modifiedTo`・`retirementFrom/retirementTo` の名称と挙動、availability 出力形式を最新仕様へ整合
+
+## [2.0.0] - 2025-12-17
+
+### Added
+
+- GitHub Releases: 「002 add get update tool」（PR #1）をリリース
+
+### Changed
+
+- GitHub 経由のインストール/配布を安定化
+  - `files` フィールド追加
+  - `prepare` スクリプト追加（公開/インストール前にビルドを保証）
+- ドキュメント整備
+  - Windows 向けインストール手順（`.tgz` 経由）
+  - 自動リリース手順の追加
+
+### Fixed
+
+- `copy-schema.mjs` を Node.js 18 互換に修正
+- CI の Node.js バージョンを Node.js 20 に更新
+
 ## [1.2.0] - 2025-12-17
 
 ### Added
@@ -130,6 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
+- **2.1.0** (2025-12-18): Availability 出力形式と retirement フィルタの拡張
+- **2.0.0** (2025-12-17): v2 系リリース（配布/CI/スクリプト互換性の改善）
 - **1.1.0** (2025-12-17): Two-tool architecture for token efficiency
 - **1.0.0** (2025-12-16): First stable release with full feature set
 - **0.1.0** (2025-12-16): Initial development version

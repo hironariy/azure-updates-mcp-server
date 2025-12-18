@@ -17,15 +17,29 @@ Use the release script to automate the entire process:
 bash scripts/release.sh
 ```
 
+If the version is already set in `package.json` (e.g., you want to release the current version without bumping), use:
+
+```bash
+bash scripts/release.sh --current
+```
+
 The script will:
 1. Verify you're on the main branch with no uncommitted changes
 2. Pull the latest changes
-3. Prompt you to select a version bump type (patch/minor/major/custom)
+
+Default mode (`bash scripts/release.sh`):
+3. Prompt you to select a version bump type (patch/minor/major)
 4. Run tests and build the project
 5. Update `package.json` with the new version
 6. Create a git commit and tag
 7. Push the commit and tag to GitHub
 8. Trigger the GitHub Actions workflow to build and publish the release
+
+No-bump mode (`bash scripts/release.sh --current`):
+3. Run tests and build the project
+4. Create a git tag for the current `package.json` version
+5. Push the tag to GitHub
+6. Trigger the GitHub Actions workflow to build and publish the release
 
 ## Manual Release
 

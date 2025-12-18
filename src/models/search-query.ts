@@ -13,19 +13,24 @@ export type SortBy =
     | 'modified:asc' // Oldest modified first
     | 'created:desc' // Most recently created first
     | 'created:asc' // Oldest created first
-    | 'retirementDate:asc' // Earliest retirement date first
-    | 'retirementDate:desc'; // Latest retirement date first
+    | 'retirement:asc' // Earliest retirement first
+    | 'retirement:desc'; // Latest retirement first
 
 /**
  * Search filters for Azure updates
+ * 
+ * NOTE on retirement date filters (retirementFrom/To):
+ * The Azure API provides retirement dates at YYYY-MM granularity (month precision only).
+ * Dates are stored in the database normalized to the 1st of the month (e.g., "2026-06" → "2026-06-01").
+ * When filtering, any ISO 8601 date within the target month works correctly due to date comparison logic.
  */
 export interface SearchFilters {
     status?: string; // Filter by status (e.g., 'Active', 'Retired')
     availabilityRing?: string; // Filter by availability ring
-    dateFrom?: string; // ISO 8601 date - include updates modified/available on or after this date
-    dateTo?: string; // ISO 8601 date - include updates modified/available on or before this date
-    retirementDateFrom?: string; // ISO 8601 date - include updates with retirement date on or after this date
-    retirementDateTo?: string; // ISO 8601 date - include updates with retirement date on or before this date
+    modifiedFrom?: string; // ISO 8601 date - include updates modified on or after this date
+    modifiedTo?: string; // ISO 8601 date - include updates modified on or before this date
+    retirementFrom?: string; // ISO 8601 date - include updates with retirement on or after this date (month-level granularity)
+    retirementTo?: string; // ISO 8601 date - include updates with retirement on or before this date (month-level granularity)
     tags?: string[]; // Filter by tags - result must contain ALL specified tags (AND semantics)
     products?: string[]; // Filter by products - result must contain ALL specified products (AND semantics)
     productCategories?: string[]; // Filter by product categories - result must contain ALL specified categories (AND semantics)

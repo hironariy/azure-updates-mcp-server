@@ -150,12 +150,12 @@ describe('Search Azure Updates Tool', () => {
 
         it('should reject invalid date format', () => {
             const result = handleSearchAzureUpdates(db, {
-                filters: { dateFrom: 'not-a-date' }
+                filters: { modifiedFrom: 'not-a-date' }
             });
             const response = JSON.parse(result.content[0].text);
 
             expect(response.error).toBe('Validation failed');
-            expect(response.details).toContain('filters.dateFrom must be a valid ISO 8601 date');
+            expect(response.details).toContain('filters.modifiedFrom must be a valid ISO 8601 date');
         });
 
         it('should accept valid availability rings', () => {
@@ -251,7 +251,7 @@ describe('Search Azure Updates Tool', () => {
         it('should filter by retirement date from', () => {
             const result = handleSearchAzureUpdates(db, {
                 filters: {
-                    retirementDateFrom: '2026-04-01',
+                    retirementFrom: '2026-04',
                 },
             });
             const response = JSON.parse(result.content[0].text);
@@ -263,7 +263,7 @@ describe('Search Azure Updates Tool', () => {
         it('should filter by retirement date to', () => {
             const result = handleSearchAzureUpdates(db, {
                 filters: {
-                    retirementDateTo: '2026-05-31',
+                    retirementTo: '2026-05',
                 },
             });
             const response = JSON.parse(result.content[0].text);
@@ -275,8 +275,8 @@ describe('Search Azure Updates Tool', () => {
         it('should filter by retirement date range', () => {
             const result = handleSearchAzureUpdates(db, {
                 filters: {
-                    retirementDateFrom: '2026-01-01',
-                    retirementDateTo: '2026-12-31',
+                    retirementFrom: '2026-01',
+                    retirementTo: '2026-12',
                 },
             });
             const response = JSON.parse(result.content[0].text);
@@ -289,13 +289,26 @@ describe('Search Azure Updates Tool', () => {
         it('should validate retirement date format', () => {
             const result = handleSearchAzureUpdates(db, {
                 filters: {
-                    retirementDateFrom: 'invalid-date',
+                    retirementFrom: 'invalid-date',
                 },
             });
             const response = JSON.parse(result.content[0].text);
 
             expect(response.error).toBe('Validation failed');
-            expect(response.details.some((d: string) => d.includes('retirementDateFrom') && d.includes('ISO 8601'))).toBe(true);
+            expect(response.details.some((d: string) => d.includes('retirementFrom') && (d.includes('YYYY-MM') || d.includes('YYYY-MM-DD')))).toBe(true);
+        });
+
+        it('should accept YYYY-MM-DD format and normalize to month', () => {
+            const result = handleSearchAzureUpdates(db, {
+                filters: {
+                    retirementFrom: '2026-04-15',
+                },
+            });
+            const response = JSON.parse(result.content[0].text);
+
+            expect(response.error).toBeUndefined();
+            expect(response.results.length).toBe(1);
+            expect(response.results[0].id).toBe('retire-2');
         });
     });
 
@@ -330,7 +343,7 @@ describe('Search Azure Updates Tool', () => {
 
         it('should sort by retirement date ascending', () => {
             const result = handleSearchAzureUpdates(db, {
-                sortBy: 'retirementDate:asc',
+                sortBy: 'retirement:asc',
             });
             const response = JSON.parse(result.content[0].text);
 
@@ -343,7 +356,7 @@ describe('Search Azure Updates Tool', () => {
 
         it('should sort by retirement date descending', () => {
             const result = handleSearchAzureUpdates(db, {
-                sortBy: 'retirementDate:desc',
+                sortBy: 'retirement:desc',
             });
             const response = JSON.parse(result.content[0].text);
 

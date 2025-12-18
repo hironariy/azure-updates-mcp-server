@@ -182,8 +182,8 @@ describe('Search Service', () => {
         it('should filter by date range', () => {
             const query: SearchQuery = {
                 filters: {
-                    dateFrom: '2025-01-01T00:00:00.0000000Z',
-                    dateTo: '2025-03-01T00:00:00.0000000Z',
+                    modifiedFrom: '2025-01-01T00:00:00.0000000Z',
+                    modifiedTo: '2025-03-01T00:00:00.0000000Z',
                 },
                 limit: 10,
                 offset: 0,

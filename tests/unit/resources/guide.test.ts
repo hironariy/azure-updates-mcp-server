@@ -119,13 +119,13 @@ describe('Guide Resource', () => {
             const sortByTip = guide.queryTips.find(tip => tip.includes('sortBy'));
             expect(sortByTip).toBeDefined();
             expect(sortByTip).toContain('modified:desc');
-            expect(sortByTip).toContain('retirementDate');
+            expect(sortByTip).toContain('retirement:desc/asc');
         });
 
         it('should include tips about retirement date filters', () => {
             const guide = generateGuideResource(db);
 
-            const retirementTip = guide.queryTips.find(tip => tip.includes('retirementDateFrom'));
+            const retirementTip = guide.queryTips.find(tip => tip.includes('retirementFrom'));
             expect(retirementTip).toBeDefined();
         });
 

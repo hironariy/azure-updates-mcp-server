@@ -47,11 +47,11 @@ export type AzureUpdateSummary = Omit<AzureUpdate, 'description'>;
 - `status`: string | null - Update status (filterable)
 - `locale`: string | null - Locale
 - `created`: string - Creation timestamp (sortable)
-- `modified`: string - Last modified timestamp (sortable, filterable via dateFrom/To)
+- `modified`: string - Last modified timestamp (sortable, filterable via modifiedFrom/To)
 - `tags`: string[] - Update tags (filterable via filters.tags with AND semantics, displayed in results)
 - `productCategories`: string[] - Product categories (filterable via filters.productCategories with AND semantics, displayed in results)
 - `products`: string[] - Specific products (filterable via filters.products with AND semantics, displayed in results)
-- `availabilities`: AzureUpdateAvailability[] - Availability info including retirement dates (filterable via retirementDateFrom/To)
+- `availabilities`: AzureUpdateAvailability[] - Availability info including retirement dates (filterable via retirementFrom/To)
 
 **Additional Field** (search-specific):
 - `relevanceScore`: number | undefined - BM25 relevance score (only present for keyword searches)

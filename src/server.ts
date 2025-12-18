@@ -112,21 +112,21 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                                         enum: ['General Availability', 'Preview', 'Private Preview', 'Retirement'],
                                         description: 'Filter by availability ring',
                                     },
-                                    dateFrom: {
+                                    modifiedFrom: {
                                         type: 'string',
-                                        description: 'ISO 8601 date - include updates modified/available on or after this date',
+                                        description: 'ISO 8601 date - include updates modified on or after this date (inclusive, filters by au.modified field)',
                                     },
-                                    dateTo: {
+                                    modifiedTo: {
                                         type: 'string',
-                                        description: 'ISO 8601 date - include updates modified/available on or before this date',
+                                        description: 'ISO 8601 date - include updates modified on or before this date (inclusive, filters by au.modified field)',
                                     },
-                                    retirementDateFrom: {
+                                    retirementFrom: {
                                         type: 'string',
-                                        description: 'ISO 8601 date - include updates with retirement date on or after this date (filters by Retirement availability ring)',
+                                        description: 'YYYY-MM format - include updates with retirement on or after this month (inclusive, filters by Retirement availability ring). Example: 2026-03 for March 2026.',
                                     },
-                                    retirementDateTo: {
+                                    retirementTo: {
                                         type: 'string',
-                                        description: 'ISO 8601 date - include updates with retirement date on or before this date (filters by Retirement availability ring)',
+                                        description: 'YYYY-MM format - include updates with retirement on or before this month (inclusive, filters by Retirement availability ring). Example: 2026-12 for December 2026.',
                                     },
                                     tags: {
                                         type: 'array',
@@ -147,8 +147,8 @@ function registerToolHandlers(server: Server, db: Database.Database): void {
                             },
                             sortBy: {
                                 type: 'string',
-                                enum: ['modified:desc', 'modified:asc', 'created:desc', 'created:asc', 'retirementDate:asc', 'retirementDate:desc'],
-                                description: 'Sort order. Default is "modified:desc". retirementDate sorts require Retirement availability ring.',
+                                enum: ['modified:desc', 'modified:asc', 'created:desc', 'created:asc', 'retirement:asc', 'retirement:desc'],
+                                description: 'Sort order. Default is "modified:desc". retirement sorts require Retirement availability ring.',
                             },
                             limit: {
                                 type: 'number',

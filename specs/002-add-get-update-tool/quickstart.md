@@ -19,8 +19,8 @@ Search and filter Azure updates, returning lightweight results with metadata onl
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `query` | string | No | Full-text search query (FTS5 on title + description). Supports phrase search: "exact phrase" for phrases, space-separated words for OR logic |
-| `filters` | object | No | Structured filters: status, availabilityRing, dates, retirementDates, tags[], products[], productCategories[] (arrays use AND semantics) |
-| `sortBy` | string | No | Sort order: modified:desc/asc, created:desc/asc, retirementDate:desc/asc (default: modified:desc) |
+| `filters` | object | No | Structured filters: status, availabilityRing, modifiedFrom/To, retirementFrom/To, tags[], products[], productCategories[] (arrays use AND semantics) |
+| `sortBy` | string | No | Sort order: modified:desc/asc, created:desc/asc, retirement:desc/asc (default: modified:desc) |
 | `limit` | number | No | Maximum results to return (1-100, default: 20) |
 | `offset` | number | No | Number of results to skip for pagination (default: 0) |
 
@@ -29,8 +29,8 @@ Search and filter Azure updates, returning lightweight results with metadata onl
 **Key Features**:
 - **Phrase search**: Use "virtual machine" to search for exact phrases in title/description
 - **Structured filters**: Use filters.tags, filters.products, filters.productCategories with AND semantics (result must contain ALL specified values)
-- **Flexible sorting**: Sort by relevance, modified, created, or retirementDate with explicit direction (:asc/:desc)
-- **Retirement planning**: Filter by retirementDateFrom/To for proactive planning
+- **Flexible sorting**: Sort by relevance, modified, created, or retirement with explicit direction (:asc/:desc)
+- **Retirement planning**: Filter by retirementFrom/To for proactive planning
 
 ### Example 1: Phrase Search for Specific Product
 
@@ -38,10 +38,10 @@ Search and filter Azure updates, returning lightweight results with metadata onl
 {
   "query": "\"Azure Databricks\" retirement",
   "filters": {
-    "retirementDateFrom": "2026-01-01",
-    "retirementDateTo": "2026-12-31"
+    "retirementFrom": "2026-01-01",
+    "retirementTo": "2026-12-31"
   },
-  "sortBy": "retirementDate:asc",
+  "sortBy": "retirement:asc",
   "limit": 10
 }
 ```
@@ -183,7 +183,7 @@ Retrieve the complete details of a specific Azure update by its ID, including th
   "query": "OAuth authentication",
   "filters": {
     "tags": ["Security"],
-    "dateFrom": "2025-01-01"
+    "modifiedFrom": "2025-01-01"
   },
   "sortBy": "modified:desc"
 }

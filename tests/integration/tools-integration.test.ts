@@ -114,10 +114,10 @@ describe('Tools Integration - Two-Tool Workflow', () => {
             // Step 1: Search for retirements
             const searchResult = handleSearchAzureUpdates(db, {
                 filters: {
-                    retirementDateFrom: '2026-01-01',
-                    retirementDateTo: '2026-12-31',
+                    retirementFrom: '2026-01',
+                    retirementTo: '2026-12',
                 },
-                sortBy: 'retirementDate:asc',
+                sortBy: 'retirement:asc',
             });
             const searchResponse = JSON.parse(searchResult.content[0].text);
 

@@ -46,12 +46,12 @@ An AI assistant needs to find Azure retirements happening within a specific date
 
 **Why this priority**: Critical for proactive planning - users need to know what's retiring soon.
 
-**Independent Test**: Can be tested by calling `search_azure_updates` with `retirementDateFrom/To` filters and verifying only matching retirements are returned, sorted correctly.
+**Independent Test**: Can be tested by calling `search_azure_updates` with `retirementFrom/To` filters and verifying only matching retirements are returned, sorted correctly.
 
 **Acceptance Scenarios**:
 
 1. **Given** a retirement date range filter, **When** `search_azure_updates` is called, **Then** only updates with retirement dates in that range are returned.
-2. **Given** `sortBy: "retirementDate:asc"`, **When** results are returned, **Then** they are ordered by earliest retirement date first.
+2. **Given** `sortBy: "retirement:asc"`, **When** results are returned, **Then** they are ordered by earliest retirement date first.
 3. **Given** a keyword query and retirement filters, **When** combined, **Then** results match both keyword relevance AND date constraints.
 
 ### Edge Cases

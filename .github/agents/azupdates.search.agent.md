@@ -281,20 +281,19 @@ STEP 4: Summarize the relevant updates found, including at least the following i
   },
   "usageExamples": [
     {
-      "description": "Phrase search: Find exact \"Azure Virtual Machines\" mentions",
+      "description": "Phrase search: Find exact \"Virtual Machine\" and Azure mentions",
       "query": {
-        "query": "\"Azure Virtual Machines\" retirement",
+        "query": "\"Virtual Machine\" azure",
         "limit": 10
       }
     },
     {
       "description": "Filter by tags with AND semantics (must have ALL specified tags)",
       "query": {
-        "query": "security",
         "filters": {
           "tags": [
             "Security",
-            "Retirements"
+            "Compliance"
           ]
         },
         "limit": 10
@@ -316,67 +315,50 @@ STEP 4: Summarize the relevant updates found, including at least the following i
       }
     },
     {
-      "description": "Find upcoming retirements sorted by date (earliest first)",
+      "description": "Filter by availability ring (Retirement) to retrieve retirement updates (note: retirement dates are month-level only, normalized to 1st of month)",
       "query": {
-        "query": "retirement",
         "filters": {
-          "retirementDateFrom": "2026-01-01",
-          "retirementDateTo": "2026-12-31"
+          "availabilityRings": [
+            "Retirement"
+          ],
+          "retirementFrom": "2026-01",
+          "retirementTo": "2026-12"
         },
-        "sortBy": "retirementDate:asc",
         "limit": 20
       }
     },
     {
-      "description": "Combined phrase search and filters",
+      "description": "Filter by products with availability ring to find GA updates for Azure Key Vault",
       "query": {
-        "query": "\"Azure Databricks\" preview",
         "filters": {
-          "tags": [
-            "AI + machine learning"
+          "products": [
+            "Azure Key Vault"
           ],
-          "productCategories": [
-            "Analytics"
+          "availabilityRings": [
+            "General Availability"
           ]
-        }
-      }
-    },
-    {
-      "description": "Two-step workflow: search then get details",
-      "query": {
-        "step1": {
-          "tool": "search_azure_updates",
-          "params": {
-            "query": "Azure SQL Database",
-            "limit": 5
-          }
         },
-        "step2": {
-          "tool": "get_azure_update",
-          "params": {
-            "id": "<id_from_search_results>"
-          }
-        }
+        "limit": 20
       }
     }
   ],
   "dataFreshness": {
     "lastSync": "2025-12-16T15:45:45.0707460Z",
-    "hoursSinceSync": 10.3,
+    "hoursSinceSync": 38.1,
     "totalRecords": 3816,
-    "syncStatus": "success"
+    "syncStatus": "in_progress"
   },
   "queryTips": [
     "Two-step workflow: Use search_azure_updates for discovery (returns lightweight metadata), then get_azure_update to fetch full descriptions",
     "Phrase search: Use double quotes for exact matches (e.g., \"Azure Virtual Machines\" finds that exact phrase)",
     "Without quotes: Words are matched with OR logic (e.g., security authentication matches \"security\" OR \"authentication\")",
     "Combine phrase search with regular words: \"Azure Databricks\" preview",
-    "Do not pass many keywords in the query to avoid overly restrictive results",
     "Structured filters: Use filters.tags, filters.products, filters.productCategories for precise filtering with AND semantics",
-    "Filter arrays require ALL values to match: tags: [\"Security\", \"Retirements\"] returns only updates with BOTH tags",
-    "sortBy parameter supports: modified:desc (default), modified:asc, created:desc/asc, retirementDate:desc/asc",
-    "Use retirementDateFrom/retirementDateTo to filter by retirement dates (ISO 8601: YYYY-MM-DD)",
-    "Use dateFrom/dateTo for filtering by modified/availability dates (ISO 8601: YYYY-MM-DD)",
+    "Filter arrays require ALL values to match: tags: [\"Security\", \"Compliance\"] returns only updates with BOTH tags",
+    "Retirement updates: Use availabilityRings filter with \"Retirement\" value, not tags. Retirement information is in the availability ring field",
+    "Retirement date filtering: Use retirementFrom/retirementTo (YYYY-MM format, inclusive). Example: retirementFrom: '2026-03' for March 2026. Retirement dates are month-level only; the API normalizes them to the 1st of each month internally",
+    "Modified date filtering: Use modifiedFrom/modifiedTo (inclusive, full timestamp with second precision)",
+    "sortBy parameter supports: modified:desc (default), modified:asc, created:desc/asc, retirement:desc/asc",
     "Set limit (default: 20, max: 100) and offset for pagination through large result sets",
     "search_azure_updates returns lightweight metadata without descriptions to reduce token usage by 80%+"
   ]

@@ -31,7 +31,7 @@
 
 - [X] T002 Add `AzureUpdateSearchSummary` type to src/models/azure-update.ts using `Omit<AzureUpdate, 'description' | 'descriptionMarkdown'>`
 - [X] T003 [P] Remove `id` parameter from `SearchQuery` type in src/models/search-query.ts
-- [X] T004 [P] Add `SortBy` type definition to src/models/search-query.ts supporting relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc
+- [X] T004 [P] Add `SortBy` type definition to src/models/search-query.ts supporting relevance, modified:desc/asc, created:desc/asc, retirement:desc/asc
 
 **Checkpoint**: Type definitions ready - user story implementation can begin
 
@@ -81,38 +81,27 @@
 
 **Goal**: Enable filtering and sorting by retirement dates for proactive planning
 
-**Independent Test**: Call `search_azure_updates` with `retirementDateFrom/To` and verify results are filtered and sorted correctly
+**Independent Test**: Call `search_azure_updates` with `retirementFrom/To` and verify results are filtered and sorted correctly
 
 ### Implementation for User Story 3 ✅
 
-- [X] T019 [P] [US3] Add `retirementDateFrom` and `retirementDateTo` filter parameters to src/tools/search-azure-updates.tool.ts input handling
-- [X] T020 [P] [US3] Add `sortBy` parameter to src/tools/search-azure-updates.tool.ts with enum validation (relevance, modified:desc/asc, created:desc/asc, retirementDate:desc/asc)
+- [X] T019 [P] [US3] Add `retirementFrom` and `retirementTo` filter parameters to src/tools/search-azure-updates.tool.ts input handling
+- [X] T020 [P] [US3] Add `sortBy` parameter to src/tools/search-azure-updates.tool.ts with enum validation (relevance, modified:desc/asc, created:desc/asc, retirement:desc/asc)
 - [X] T021 [US3] Implement retirement date filtering logic in src/tools/search-azure-updates.tool.ts (filter availabilities array where ring='Retirement')
 - [X] T022 [US3] Implement sortBy logic in src/tools/search-azure-updates.tool.ts with direction parsing (split on ':')
-- [X] T023 [US3] Implement retirementDate sorting in src/tools/search-azure-updates.tool.ts (extract retirement date from availabilities, exclude updates without Retirement ring)
-- [X] T024 [US3] Update tool schema in src/server.ts to add `retirementDateFrom/To` and `sortBy` parameters with descriptions
+- [X] T023 [US3] Implement retirement sorting in src/tools/search-azure-updates.tool.ts (extract retirement date from availabilities, exclude updates without Retirement ring)
+- [X] T024 [US3] Update tool schema in src/server.ts to add `retirementFrom/To` and `sortBy` parameters with descriptions
 - [X] T025 [US3] Update default limit from 50 to 20 in src/server.ts schema
 - [X] T026 [US3] Clarify offset parameter description in src/server.ts with pagination example
 - [X] T027 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirement date filtering
 - [X] T028 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for sortBy parameter (all directions)
-- [X] T029 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirementDate sorting edge cases (no Retirement ring)
+- [X] T029 [P] [US3] Add unit tests in tests/unit/tools/search-azure-updates.test.ts for retirement sorting edge cases (no Retirement ring)
 - [X] T030 [US3] Verify test coverage ≥80% for new filtering and sorting logic
-
-**Checkpoint**: Retirement date filtering and sorting fully functional
-
----
-
-## Phase 6: Integration & Documentation
-
-**Purpose**: Update guide resource and integration tests for two-tool pattern
-
-### Guide Resource Updates
-
-- [X] T031 [P] Remove `id` parameter example from src/resources/guide.resource.ts usage examples
-- [X] T032 [P] Update overview in src/resources/guide.resource.ts to mention two-tool architecture (search for discovery, get for details)
-- [X] T033 [P] Add query tips in src/resources/guide.resource.ts: explain tags/categories/products are searchable via query parameter
-- [X] T034 [P] Add query tips in src/resources/guide.resource.ts: explain sortBy with direction suffixes
-- [X] T035 [P] Add query tips in src/resources/guide.resource.ts: explain retirementDateFrom/To filters
+- [X] T031 [P] [US3] Rename search parameters for clarity (`dateFrom/To` -> `modifiedSince/Until`, `retirementDateFrom/To` -> `retirementFrom/To`)
+- [X] T032 [P] [US3] Update all documentation and agent instructions to use new parameter names
+- [X] T033 [P] [US3] Update integration tests to use new parameter names
+- [X] T034 [P] [US3] Update guide resource usage examples and query tips
+- [X] T035 [P] Add query tips in src/resources/guide.resource.ts: explain retirementFrom/To filters
 - [X] T036 Add query tip in src/resources/guide.resource.ts: explain two-step workflow (search → get_azure_update)
 - [X] T037 Update usage examples in src/resources/guide.resource.ts to use simplified filtering (query parameter instead of individual filters)
 - [X] T038 Update usage examples in src/resources/guide.resource.ts to show sortBy and retirement date filtering

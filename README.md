@@ -82,11 +82,11 @@ For quick testing without installation:
 
 If `npm install ...` fails on Windows (due to path length limitations or `tsc` errors), try manual installation from the `.tgz` file.
 
-Copy the URL of the latest `.tgz` file (e.g., `azure-updates-mcp-server-1.2.0.tgz`) from the [Releases page](https://github.com/juyamagu/azure-updates-mcp-server/releases) and install directly. This eliminates the need for local builds.
+Copy the URL of the latest `.tgz` file from the [Releases page](https://github.com/juyamagu/azure-updates-mcp-server/releases) and install directly. This eliminates the need for local builds.
 
 ```bash
 # Replace the URL with the actual latest release
-npm install -g https://github.com/juyamagu/azure-updates-mcp-server/releases/download/v1.2.0/azure-updates-mcp-server-1.2.0.tgz
+npm install -g https://github.com/juyamagu/azure-updates-mcp-server/releases/download/v2.1.0/azure-updates-mcp-server-2.1.0.tgz
 ```
 
 ## Usage
@@ -106,7 +106,7 @@ Your assistant automatically constructs the appropriate parameters and calls the
     "query": "OAuth",
     "filters": {
       "tags": ["Security"],
-      "dateFrom": "2025-01-01"
+      "modifiedFrom": "2025-01-01"
     },
     "limit": 10
   }
@@ -145,7 +145,7 @@ Search and filter Azure updates to find relevant items. Returns **metadata only*
   "query": "OAuth",
   "filters": {
     "tags": ["Security"],
-    "dateFrom": "2025-01-01"
+    "modifiedFrom": "2025-01-01"
   },
   "limit": 10
 }

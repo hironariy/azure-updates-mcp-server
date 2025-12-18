@@ -20,7 +20,7 @@ Add a new `get_azure_update` tool for retrieving full update details by ID and s
 - `search_azure_updates`: Response payload size reduced by 80%+ compared to current version  
 **Constraints**: 
 - No breaking changes to database schema
-- Existing search filters and query parameters must be preserved (except `id` parameter)
+- Existing search filters and query parameters must be preserved (except `id` parameter, and renaming date filters for clarity)
 - Backward compatibility not required (breaking change acceptable for tool interface)  
 **Scale/Scope**: 
 - Single new tool handler (~100 LOC)
@@ -30,6 +30,7 @@ Add a new `get_azure_update` tool for retrieving full update details by ID and s
 - Add unit tests (~200 LOC)
 - Update integration tests (~100 LOC)
 - Update resource tests (~30 LOC)
+- Rename search parameters (`dateFrom/To` -> `modifiedSince/Until`, `retirementDateFrom/To` -> `retirementFrom/To`)
 
 ## Constitution Check
 

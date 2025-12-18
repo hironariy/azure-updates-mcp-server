@@ -148,9 +148,13 @@ inputSchema: {
         type: 'string',
         description: 'Full-text search query. Supports phrase search: "exact phrase" for exact matches, other words use OR logic. Case-insensitive.'
     },
-    dateFrom: {
+    modifiedFrom: {
         type: 'string',
-        description: 'ISO 8601 date - include updates modified/available on or after this date (e.g., 2025-01-01)'
+        description: 'ISO 8601 date - include updates modified on or after this date (e.g., 2025-01-01)'
+    },
+    retirementFrom: {
+        type: 'string',
+        description: 'Retirement month (YYYY-MM) or date (YYYY-MM-DD). Month granularity only; normalized internally. (e.g., 2026-03)'
     }
 }
 ```
@@ -219,7 +223,8 @@ inputSchema: {
     error: 'validation_error',
     details: [
         'limit must be between 1 and 100',
-        'dateFrom must be ISO 8601 format (YYYY-MM-DD)'
+        'modifiedFrom must be a valid ISO 8601 date',
+        'retirementFrom must be in YYYY-MM or YYYY-MM-DD format (month granularity)'
     ]
 }
 ```

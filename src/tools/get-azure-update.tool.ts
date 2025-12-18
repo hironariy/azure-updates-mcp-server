@@ -11,6 +11,7 @@
 
 import type Database from 'better-sqlite3';
 import { getUpdateById } from '../database/queries.js';
+import { formatAvailabilities } from '../utils/availability-formatter.js';
 import * as logger from '../utils/logger.js';
 
 /**
@@ -146,11 +147,17 @@ export function handleGetAzureUpdate(db: Database.Database, input: unknown): Too
             durationMs: duration
         });
 
+        // Format availability information from ISO 8601 to year/month
+        const formattedUpdate = {
+            ...update,
+            availabilities: formatAvailabilities(update.availabilities),
+        };
+
         // Return full update details (including description)
         return {
             content: [{
                 type: 'text',
-                text: JSON.stringify(update, null, 2)
+                text: JSON.stringify(formattedUpdate, null, 2)
             }],
             isError: false
         };

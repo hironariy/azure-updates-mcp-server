@@ -1,4 +1,4 @@
 ---
 agent: azupdates.ask
-description: Ask for Azure Updates details
+description: Ask for details
 ---

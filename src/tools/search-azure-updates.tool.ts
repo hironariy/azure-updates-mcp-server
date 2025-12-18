@@ -10,7 +10,7 @@
  *   "query": "OAuth authentication security",
  *   "filters": {
  *     "tags": ["Security"],
- *     "dateFrom": "2025-01-01"
+ *     "modifiedFrom": "2025-01-01"
  *   },
  *   "limit": 10
  * }
@@ -23,8 +23,8 @@
  *     "tags": ["Retirements"],
  *     "productCategories": ["Compute"],
  *     "availabilityRing": "Retirement",
- *     "dateFrom": "2026-01-01",
- *     "dateTo": "2026-03-31"
+ *     "retirementFrom": "2026-03",
+ *     "retirementTo": "2026-12"
  *   }
  * }
  * ```
@@ -46,7 +46,7 @@
  *     "products": ["Azure SQL Database", "Cosmos DB"],
  *     "status": "Active",
  *     "availabilityRing": "General Availability",
- *     "dateFrom": "2025-01-01"
+ *     "modifiedFrom": "2025-01-01"
  *   },
  *   "limit": 50,
  *   "offset": 0
@@ -57,6 +57,7 @@
 import type Database from 'better-sqlite3';
 import type { SearchQuery, SearchFilters } from '../models/search-query.js';
 import { searchUpdates } from '../services/search.service.js';
+import { formatAvailabilities } from '../utils/availability-formatter.js';
 import * as logger from '../utils/logger.js';
 
 // Constants for validation
@@ -82,10 +83,10 @@ interface ToolInput {
         products?: string[];
         status?: string;
         availabilityRing?: string;
-        dateFrom?: string;
-        dateTo?: string;
-        retirementDateFrom?: string;
-        retirementDateTo?: string;
+        modifiedFrom?: string;
+        modifiedTo?: string;
+        retirementFrom?: string;
+        retirementTo?: string;
     };
     sortBy?: string;
     limit?: number;
@@ -177,6 +178,7 @@ export function handleSearchAzureUpdates(
 
         // Format response (lightweight: no description fields)
         // Returns AzureUpdateSearchSummary[] for token efficiency
+        // Convert availability dates from ISO 8601 to year/month for user readability
         const formattedResponse = {
             results: response.results.map(update => ({
                 id: update.id,
@@ -185,7 +187,7 @@ export function handleSearchAzureUpdates(
                 tags: update.tags,
                 productCategories: update.productCategories,
                 products: update.products,
-                availabilities: update.availabilities,
+                availabilities: formatAvailabilities(update.availabilities),
                 created: update.created,
                 modified: update.modified,
                 relevance: update.relevanceScore,
@@ -278,6 +280,10 @@ function validateInput(args: unknown): ValidationResult {
 /**
  * Build SearchFilters from validated input filters
  * 
+ * Converts retirement dates to ISO 8601 (YYYY-MM-01) for internal use.
+ * Accepts both YYYY-MM and YYYY-MM-DD formats, normalizing to month-level.
+ * Internal storage still uses ISO format; conversion is only at the API boundary.
+ * 
  * @param inputFilters Input filter object
  * @returns SearchFilters object
  */
@@ -289,10 +295,20 @@ function buildSearchFilters(inputFilters: ToolInput['filters']): SearchFilters {
     // Copy string filters
     if (inputFilters.status) filters.status = inputFilters.status;
     if (inputFilters.availabilityRing) filters.availabilityRing = inputFilters.availabilityRing;
-    if (inputFilters.dateFrom) filters.dateFrom = inputFilters.dateFrom;
-    if (inputFilters.dateTo) filters.dateTo = inputFilters.dateTo;
-    if (inputFilters.retirementDateFrom) filters.retirementDateFrom = inputFilters.retirementDateFrom;
-    if (inputFilters.retirementDateTo) filters.retirementDateTo = inputFilters.retirementDateTo;
+    if (inputFilters.modifiedFrom) filters.modifiedFrom = inputFilters.modifiedFrom;
+    if (inputFilters.modifiedTo) filters.modifiedTo = inputFilters.modifiedTo;
+
+    // Convert retirement dates to ISO 8601 (YYYY-MM-01)
+    // Accepts both YYYY-MM and YYYY-MM-DD, always normalizes to month
+    // User provides: "2026-03" or "2026-03-15" → Internal: "2026-03-01"
+    if (inputFilters.retirementFrom) {
+        const normalizedMonth = inputFilters.retirementFrom.substring(0, 7);
+        filters.retirementFrom = `${normalizedMonth}-01`;
+    }
+    if (inputFilters.retirementTo) {
+        const normalizedMonth = inputFilters.retirementTo.substring(0, 7);
+        filters.retirementTo = `${normalizedMonth}-01`;
+    }
 
     // Copy array filters
     if (inputFilters.tags) filters.tags = inputFilters.tags;
@@ -355,8 +371,8 @@ function validateSortBy(sortBy: unknown, errors: string[]): void {
         'modified:asc',
         'created:desc',
         'created:asc',
-        'retirementDate:asc',
-        'retirementDate:desc',
+        'retirement:asc',
+        'retirement:desc',
     ];
 
     if (!validSortOptions.includes(sortBy)) {
@@ -399,10 +415,10 @@ function validateFilters(
     }
 
     // Validate date filters
-    validateDateFilter(filters.dateFrom, 'dateFrom', errors);
-    validateDateFilter(filters.dateTo, 'dateTo', errors);
-    validateDateFilter(filters.retirementDateFrom, 'retirementDateFrom', errors);
-    validateDateFilter(filters.retirementDateTo, 'retirementDateTo', errors);
+    validateDateFilter(filters.modifiedFrom, 'modifiedFrom', errors);
+    validateDateFilter(filters.modifiedTo, 'modifiedTo', errors);
+    validateDateFilter(filters.retirementFrom, 'retirementFrom', errors);
+    validateDateFilter(filters.retirementTo, 'retirementTo', errors);
 }
 
 /**
@@ -431,6 +447,11 @@ function validateArrayFilter(
 /**
  * Validate a date filter parameter
  * 
+ * For modifiedFrom/To: ISO 8601 format (YYYY-MM-DD or full ISO timestamp)
+ * For retirementFrom/To: YYYY-MM or YYYY-MM-DD format (month-level)
+ *   - Both formats accepted for convenience; normalized to month internally
+ *   - Example: "2026-03" or "2026-03-15" both represent March 2026
+ * 
  * @param value Date string value
  * @param fieldName Field name for error messages
  * @param errors Error array to push errors to
@@ -445,10 +466,34 @@ function validateDateFilter(
     }
 
     if (typeof value !== 'string') {
-        errors.push(`filters.${fieldName} must be an ISO 8601 date string`);
-    } else if (!isValidIsoDate(value)) {
-        errors.push(`filters.${fieldName} must be a valid ISO 8601 date`);
+        errors.push(`filters.${fieldName} must be a string`);
+        return;
     }
+
+    if (fieldName.startsWith('retirement')) {
+        // retirementFrom/To can be YYYY-MM or YYYY-MM-DD (both normalized to month)
+        if (!isValidRetirementDate(value)) {
+            errors.push(`filters.${fieldName} must be in YYYY-MM or YYYY-MM-DD format (e.g., 2026-03 or 2026-03-15 for March 2026)`);
+        }
+    } else {
+        // modifiedFrom/To must be ISO 8601 format
+        if (!isValidIsoDate(value)) {
+            errors.push(`filters.${fieldName} must be a valid ISO 8601 date`);
+        }
+    }
+}
+
+/**
+ * Validate retirement date format (YYYY-MM or YYYY-MM-DD)
+ * Both formats are accepted and normalized to month-level
+ * 
+ * @param dateString Date string to validate
+ * @returns True if valid retirement date format
+ */
+function isValidRetirementDate(dateString: string): boolean {
+    // Match YYYY-MM or YYYY-MM-DD format
+    const pattern = /^\d{4}-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12]\d|3[01]))?$/;
+    return pattern.test(dateString);
 }
 
 /**

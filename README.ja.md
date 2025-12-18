@@ -56,11 +56,11 @@ npm install -g github:juyamagu/azure-updates-mcp-server
 
 Windows 環境で `npm install ...` が失敗する場合（パスの長さ制限や `tsc` エラーなど）、`tgz` からの手動インストールをお試しください。
 
-[Releases ページ](https://github.com/juyamagu/azure-updates-mcp-server/releases)から最新の `.tgz` ファイル（例: `azure-updates-mcp-server-1.2.0.tgz`）の URL をコピーし、直接インストールします。これによりローカルでのビルドが不要になります。
+[Releases ページ](https://github.com/juyamagu/azure-updates-mcp-server/releases)から最新の `.tgz` ファイルの URL をコピーし、直接インストールします。これによりローカルでのビルドが不要になります。
 
 ```bash
 # URL は実際の最新リリースのものに置き換えてください
-npm install -g https://github.com/juyamagu/azure-updates-mcp-server/releases/download/v1.2.0/azure-updates-mcp-server-1.2.0.tgz
+npm install -g https://github.com/juyamagu/azure-updates-mcp-server/releases/download/v2.1.0/azure-updates-mcp-server-2.1.0.tgz
 ```
 
 ### オプション 2: npx を使用
@@ -104,7 +104,7 @@ AI アシスタントに自然言語クエリとオプションのフィルタ�
     "query": "OAuth",
     "filters": {
       "tags": ["Security"],
-      "dateFrom": "2025-01-01"
+      "modifiedFrom": "2025-01-01"
     },
     "limit": 10
   }
@@ -143,9 +143,21 @@ Azure 更新情報を検索・フィルタリングして関連するアイテ�
   "query": "OAuth",
   "filters": {
     "tags": ["Security"],
-    "dateFrom": "2025-01-01"
+    "modifiedFrom": "2025-01-01"
   },
   "limit": 10
+}
+```
+
+**availability の形式について**
+
+このサーバーは `availabilities` を日付文字列ではなく、年・月に分けた構造で返します:
+
+```json
+{
+  "ring": "Retirement",
+  "year": 2026,
+  "month": "March"
 }
 ```
 
